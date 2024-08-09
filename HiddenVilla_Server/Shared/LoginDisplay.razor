@@ -1,0 +1,14 @@
+﻿
+<AuthorizeView>
+    <Authorized>
+        context.User.Identity.Name
+        <a href="Identity/Account/Logout">خروج</a>
+    </Authorized>
+    <NotAuthorized>
+        <a href="Identity/Account/Register">عضویت</a>
+        <a href="Identity/Account/Login">ورود</a>
+    </NotAuthorized>
+</AuthorizeView>
+@code {
+
+}

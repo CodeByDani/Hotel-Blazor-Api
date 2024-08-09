@@ -1,0 +1,42 @@
+﻿<div dir="rtl" class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">بخش مدیریت هتل</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<div dir="rtl" class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span><p class="p-2 m-2">صفحه اصلی</p> 
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="hotel-room" Match="NavLinkMatch.All">
+                <span class="oi oi-list-rich" aria-hidden="true"></span><p class="p-2 m-2">اتاق های هتل</p>
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="hotel-amenity">
+                <span class="oi oi-list-rich" aria-hidden="true"></span><p class="p-2 m-2">امکانات هتل</p> 
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="hotel-room-order">
+                <span class="oi oi-list-rich" aria-hidden="true"></span><p class="p-2 m-2">رزو های هتل</p> 
+            </NavLink>
+        </li>
+    </ul>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}
