@@ -10,36 +10,36 @@
 @inject IFileUpload FileUpload
 
 <div class="row mt-2 mb-5">
-    <h3 class="card-title text-info mb-3 ml-3">@Title Hotel Room</h3>
+    <h3 class="card-title text-info mb-3 ml-3 text-right">@Title اتاق هتل</h3>
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
                 <EditForm Model="HotelRoomModel" OnValidSubmit="HandleHotelRoomUpsert">
                     <DataAnnotationsValidator />
                     @*<ValidationSummary />*@
-                    <div class="form-group">
-                        <label>Name</label>
+                    <div class="form-group text-right">
+                        <label>نام</label>
                         <InputText @bind-Value="HotelRoomModel.Name" class="form-control"></InputText>
                         <ValidationMessage For="()=>HotelRoomModel.Name"></ValidationMessage>
                     </div>
-                    <div class="form-group">
-                        <label>Occupancy</label>
+                    <div class="form-group text-right">
+                        <label>ظرفیت</label>
                         <InputNumber @bind-Value="HotelRoomModel.Occupancy" class="form-control"></InputNumber>
                         <ValidationMessage For="()=>HotelRoomModel.Occupancy"></ValidationMessage>
                     </div>
-                    <div class="form-group">
-                        <label>Rate</label>
+                    <div class="form-group text-right">
+                        <label>نرخ</label>
                         <InputNumber @bind-Value="HotelRoomModel.RegularRate" class="form-control"></InputNumber>
                         <ValidationMessage For="()=>HotelRoomModel.RegularRate"></ValidationMessage>
                     </div>
-                    <div class="form-group">
-                        <label>Sq ft.</label>
+                    <div class="form-group text-right">
+                        <label>مساحت (فوت مربع)</label>
                         <InputText @bind-Value="HotelRoomModel.SqFt" class="form-control"></InputText>
                     </div>
-                    <div class="form-group" style="height:250px;">
-                        <label>Details</label>
+                    <div class="form-group text-right" style="height:250px;">
+                        <label>جزئیات</label>
                         @*<InputTextArea @bind-Value="HotelRoomModel.Details" class="form-control"></InputTextArea>*@
-                        <BlazoredTextEditor @ref="@QuillHtml" Placeholder="Please enter room detals">
+                        <BlazoredTextEditor @ref="@QuillHtml" Placeholder="لطفاً جزئیات اتاق را وارد کنید">
                             <ToolbarContent>
                                 <select class="ql-header">
                                     <option selected=""></option>
@@ -68,17 +68,16 @@
                                 </span>
                             </ToolbarContent>
                             <EditorContent>
-
                             </EditorContent>
                         </BlazoredTextEditor>
                     </div>
-                    <div class="form-group" style="padding-top:70px;">
+                    <div class="form-group text-right" style="padding-top:70px;">
                         <InputFile OnChange="HandleImageUpload" multiple></InputFile>
                         <div class="row">
                             @if (IsImageUploadProcessStarted)
                             {
                                 <div class="col-md-12">
-                                    <span><i class="fa fa-spin fa-spinner"></i> Please wait.. Images are uploading...</span>
+                                    <span><i class="fa fa-spin fa-spinner"></i> لطفاً صبر کنید... تصاویر در حال بارگذاری هستند...</span>
                                 </div>
                             }
                             @if (HotelRoomModel.ImageUrls != null && HotelRoomModel.ImageUrls.Count > 0)
@@ -92,7 +91,7 @@
                                         </div>
 
                                         <button type="button" @onclick="()=>DeletePhoto(roomImage)" class="btn btn-outline-danger btn-block mt-4">
-                                            Delete
+                                            حذف
                                         </button>
                                     </div>
                                     serial++;
@@ -100,9 +99,9 @@
                             }
                         </div>
                     </div>
-                    <div class="form-group">
-                        <button class="btn btn-primary">@Title Room</button>
-                        <NavLink href="hotel-room" class="btn btn-secondary">Back to Index</NavLink>
+                    <div class="form-group text-right">
+                        <button class="btn btn-primary">@Title اتاق</button>
+                        <NavLink href="hotel-room" class="btn btn-secondary">بازگشت به لیست</NavLink>
                     </div>
                 </EditForm>
             </div>
@@ -111,11 +110,10 @@
 </div>
 
 @code {
-
     [Parameter]
     public int? Id { get; set; }
     private HotelRoomDTO HotelRoomModel { get; set; } = new HotelRoomDTO();
-    private string Title { get; set; } = "Create";
+    private string Title { get; set; } = "ایجاد";
     private HotelRoomImageDTO RoomImage { get; set; } = new HotelRoomImageDTO();
     private List<string> DeletedImageNames { get; set; } = new List<string>();
     public BlazoredTextEditor QuillHtml { get; set; } = new BlazoredTextEditor();
@@ -135,20 +133,18 @@
         if (Id != null)
         {
             //updating
-            Title = "Update";
+            Title = "به‌روزرسانی";
             HotelRoomModel = await HotelRoomRepository.GetHotelRoom(Id.Value);
             if (HotelRoomModel?.HotelRoomImages != null)
             {
                 HotelRoomModel.ImageUrls = HotelRoomModel.HotelRoomImages.Select(u => u.RoomImageUrl).ToList();
             }
-
         }
         else
         {
             //create
             HotelRoomModel = new HotelRoomDTO();
         }
-
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -172,9 +168,6 @@
                 loading = true;
             }
         }
-
-
-
     }
 
     private async Task HandleHotelRoomUpsert()
@@ -184,11 +177,11 @@
             var roomDetailsByName = await HotelRoomRepository.IsRoomUnique(HotelRoomModel.Name, HotelRoomModel.Id);
             if (roomDetailsByName != null)
             {
-                await JsRuntime.ToastrError("Room name already exists.");
+                await JsRuntime.ToastrError("نام اتاق قبلاً وجود دارد.");
                 return;
             }
 
-            if (HotelRoomModel.Id != 0 && Title == "Update")
+            if (HotelRoomModel.Id != 0 && Title == "به‌روزرسانی")
             {
                 HotelRoomModel.Details = await QuillHtml.GetHTML();
                 //update
@@ -206,11 +199,9 @@
                         }
                     }
 
-
-
                     await AddHotelRoomImage(updateRoomResult);
                 }
-                await JsRuntime.ToastrSuccess("Hotel room updated successfully.");
+                await JsRuntime.ToastrSuccess("اتاق هتل با موفقیت به‌روزرسانی شد.");
             }
             else
             {
@@ -218,7 +209,7 @@
                 HotelRoomModel.Details = await QuillHtml.GetHTML();
                 var createdResult = await HotelRoomRepository.CreateHotelRoom(HotelRoomModel);
                 await AddHotelRoomImage(createdResult);
-                await JsRuntime.ToastrSuccess("Hotel room created successfully.");
+                await JsRuntime.ToastrSuccess("اتاق هتل با موفقیت ایجاد شد.");
             }
         }
         catch (Exception ex)
@@ -226,19 +217,8 @@
             //log exceptions
         }
 
-
-
         NavigationManager.NavigateTo("hotel-room");
     }
-
-    //public void SetHTML()
-    //{
-    //    if (!string.IsNullOrEmpty(HotelRoomModel.Details))
-    //    {
-    //        this.QuillHtml.LoadHTMLContent(HotelRoomModel.Details);
-    //    }
-    //    StateHasChanged();
-    //}
 
     private async Task HandleImageUpload(InputFileChangeEventArgs e)
     {
@@ -260,7 +240,7 @@
                     }
                     else
                     {
-                        await JsRuntime.ToastrError("Please select .jpg/.jpeg/.png file only");
+                        await JsRuntime.ToastrError("لطفاً فقط فایل‌های .jpg/.jpeg/.png انتخاب کنید");
                         return;
                     }
                 }
@@ -279,7 +259,7 @@
                 }
                 else
                 {
-                    await JsRuntime.ToastrError("Image uploading failed");
+                    await JsRuntime.ToastrError("بارگذاری تصویر ناموفق بود");
                     return;
                 }
             }
@@ -289,9 +269,6 @@
         {
             await JsRuntime.ToastrError(ex.Message);
         }
-
-
-
     }
 
     private async Task AddHotelRoomImage(HotelRoomDTO roomDetails)
@@ -302,10 +279,10 @@
             {
 
                 RoomImage = new HotelRoomImageDTO()
-                {
-                    RoomId = roomDetails.Id,
-                    RoomImageUrl = imageUrl
-                };
+                    {
+                        RoomId = roomDetails.Id,
+                        RoomImageUrl = imageUrl
+                    };
                 await HotelImagesRepository.CreateHotelRoomImage(RoomImage);
             }
         }
@@ -317,7 +294,7 @@
         {
             var imageIndex = HotelRoomModel.ImageUrls.FindIndex(x => x == imageUrl);
             var imageName = imageUrl.Replace($"{NavigationManager.BaseUri}RoomImages/", "");
-            if (HotelRoomModel.Id == 0 && Title == "Create")
+            if (HotelRoomModel.Id == 0 && Title == "ایجاد")
             {
                 var result = FileUpload.DeleteFile(imageName);
             }

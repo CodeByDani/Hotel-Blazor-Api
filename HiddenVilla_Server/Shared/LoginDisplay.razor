@@ -1,7 +1,9 @@
 ﻿
 <AuthorizeView>
     <Authorized>
-        context.User.Identity.Name
+        <span class="p-2 m-2">
+            @context.User.Identity.Name
+        </span>
         <a href="Identity/Account/Logout">خروج</a>
     </Authorized>
     <NotAuthorized>

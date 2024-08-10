@@ -7,10 +7,10 @@
 @attribute [Authorize(Roles = Common.SD.Role_Admin)]
 <div class="row mt-4">
     <div class="col-6">
-        <h4 class="card-title text-info">Hotel Amenity</h4>
+        <h4 class="card-title text-info text-right">امکانات هتل</h4>
     </div>
     <div class="col-5 offset-1">
-        <NavLink href="@($"hotel-amenity/create")" class="btn btn-info form-control">Add New Amenity </NavLink>
+        <NavLink href="@($"hotel-amenity/create")" class="btn btn-info form-control text-right">افزودن امکانات جدید</NavLink>
     </div>
 </div>
 <div class="row mt-4">
@@ -20,12 +20,12 @@
 
         <table class="table table-bordered table-hover" id="tblHotelAmenity">
             <thead>
-                <tr>
+                <tr class="text-right">
 
-                    <th>Name</th>
-                    <th>Timming</th>
-                    <th>Icon</th>
-                    <th>Actions</th>
+                    <th>نام</th>
+                    <th>تایم</th>
+                    <th>آیکون</th>
+                    <th>اقدامات</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,13 +33,13 @@
                 {
                     foreach (var amenity in HotelAmenities)
                     {
-                        <tr>
+                        <tr class="text-right">
                             <td>@amenity.Name</td>
                             <td>@amenity.Timming</td>
                             <td><i class="@amenity.IconStyle"></i></td>
                             <td>
-                                <NavLink href="@($"hotel-amenity/edit/{amenity.Id}")" class="btn btn-primary">Edit</NavLink>
-                                <button class="btn btn-danger" @onclick="() => HandleDelete(amenity.Id)">Delete</button>
+                                <NavLink href="@($"hotel-amenity/edit/{amenity.Id}")" class="btn btn-primary">ویرایش</NavLink>
+                                <button class="btn btn-danger" @onclick="() => HandleDelete(amenity.Id)">حذف</button>
                             </td>
 
                         </tr>
@@ -47,8 +47,8 @@
                 }
                 else
                 {
-                    <tr>
-                        <td colspan="9">No records found</td>
+                    <tr class="text-right">
+                        <td colspan="9">هیچ رکوردی یافت نشد</td>
                     </tr>
                 }
             </tbody>
@@ -85,7 +85,7 @@
             try
             {
                 var result = await AmenityRepository.DeleteHotelAmenity(DeleteAmenityId.Value, "");
-                await JsRuntime.ToastrSuccess("Amenity Deleted successfully");
+                await JsRuntime.ToastrSuccess("امکانات با موفقیت حذف شد");
             }
             catch (Exception e)
             {

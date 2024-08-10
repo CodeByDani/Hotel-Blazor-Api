@@ -6,21 +6,20 @@
 @inject IJSRuntime jsRuntime
 @inject NavigationManager navigationManager
 
-
 @if (!IsLoading)
 {
-    <h4 class="card-title text-info">Hotel Room Order's</h4>
+    <h4 class="card-title text-info text-right">سفارش‌های اتاق هتل</h4>
     <RadzenGrid AllowFiltering="true"
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                 FilterMode="FilterMode.Advanced" AllowPaging="true" PageSize="4"
                 AllowSorting="true" Data="@HotelRoomOrders" TItem="RoomOrderDetailsDTO" ColumnWidth="200px">
         <Columns>
-            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Name" Title="Customer Name" />
-            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Phone" Title="Customer Name" />
-            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Email" Title="Customer Name" />
-            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="HotelRoomDTO.Name" Title="Room" />
-            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Status" Title="Status" />
-            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="CheckInDate" Title="Check in Date">
+            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Name" Title="نام مشتری" />
+            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Phone" Title="تلفن مشتری" />
+            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Email" Title="ایمیل مشتری" />
+            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="HotelRoomDTO.Name" Title="اتاق" />
+            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Status" Title="وضعیت" />
+            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="CheckInDate" Title="تاریخ ورود">
                 <Template Context="data">
                     @String.Format("{0:d}", data.CheckInDate)
                 </Template>
@@ -28,7 +27,7 @@
 
             <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Id" Title="">
                 <Template Context="data">
-                    <NavLink class="btn btn-primary" href="@($"hotel-room-order/details/{data.Id}")">Details</NavLink>
+                    <NavLink class="btn btn-primary" href="@($"hotel-room-order/details/{data.Id}")">جزئیات</NavLink>
                 </Template>
             </RadzenGridColumn>
         </Columns>
@@ -36,10 +35,8 @@
 }
 else
 {
-    <p>loading...</p>
+    <p>در حال بارگذاری...</p>
 }
-
-
 
 @code {
     private IEnumerable<RoomOrderDetailsDTO> HotelRoomOrders { get; set; } = new List<RoomOrderDetailsDTO>();

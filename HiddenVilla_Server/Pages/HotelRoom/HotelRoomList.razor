@@ -8,26 +8,22 @@
 @attribute [Authorize(Roles = Common.SD.Role_Admin)]
 <div class="row mt-4">
     <div class="col-8">
-        <h4 class="card-title text-info">Hotel Room's</h4>
+        <h4 class="card-title text-info text-right">اتاق‌های هتل</h4>
     </div>
     <div class="col-3 offset-1">
-        <NavLink href="hotel-room/create" class="btn btn-info form-control">Add New Room</NavLink>
+        <NavLink href="hotel-room/create" class="btn btn-info form-control text-right">افزودن اتاق جدید</NavLink>
     </div>
 </div>
 <div class="row mt-4">
     <div class="col-12">
-        <table class="table table-bordered table-hover">
+        <table class="table table-bordered table-hover text-right">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Occupancy</th>
-                    <th>Rate</th>
-                    <th>
-                        Sqft
-                    </th>
-                    <th>
-
-                    </th>
+                    <th>نام</th>
+                    <th>ظرفیت</th>
+                    <th>نرخ</th>
+                    <th>مساحت (فوت مربع)</th>
+                    <th>اقدامات</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,8 +37,8 @@
                             <td>@room.RegularRate.ToString("c")</td>
                             <td>@room.SqFt</td>
                             <td>
-                                <NavLink href="@($"hotel-room/edit/{room.Id}")" class="btn btn-primary">Edit</NavLink>
-                                <button class="btn btn-danger" @onclick="()=>HandleDelete(room.Id)">Delete</button>
+                                <NavLink href="@($"hotel-room/edit/{room.Id}")" class="btn btn-primary">ویرایش</NavLink>
+                                <button class="btn btn-danger" @onclick="()=>HandleDelete(room.Id)">حذف</button>
                             </td>
                         </tr>
                     }
@@ -50,7 +46,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="5">No records found</td>
+                        <td colspan="5">هیچ رکوردی یافت نشد</td>
                     </tr>
                 }
             </tbody>
@@ -90,7 +86,7 @@
             }
 
             await HotelRoomRepository.DeleteHotelRoom(DeleteRoomId.Value);
-            await JsRuntime.ToastrSuccess("Hotel Room Deleted successfully");
+            await JsRuntime.ToastrSuccess("اتاق هتل با موفقیت حذف شد.");
             HotelRooms = await HotelRoomRepository.GetAllHotelRooms();
         }
         await JsRuntime.InvokeVoidAsync("HideDeleteConfirmationModal");
