@@ -1,10 +1,13 @@
 ﻿@page "/hotel-room"
 @using Models
 @using Business.Repository.IRepository
+@using HiddenVilla_Server.Service
+@using HiddenVilla_Server.Service.IService
 @inject IHotelRoomRepository HotelRoomRepository
 @inject IJSRuntime JsRuntime
 @inject HiddenVilla_Server.Service.IService.IFileUpload FileUpload
 @inject NavigationManager NavigationManager
+@inject ICityService CityService
 @attribute [Authorize(Roles = Common.SD.Role_Admin)]
 <div class="row mt-4">
     <div class="col-8">
@@ -22,6 +25,7 @@
                     <th>نام</th>
                     <th>ظرفیت</th>
                     <th>نرخ</th>
+                    <th>استان</th>
                     <th>مساحت (فوت مربع)</th>
                     <th>اقدامات</th>
                 </tr>
@@ -35,7 +39,9 @@
                             <td>@room.Name</td>
                             <td>@room.Occupancy</td>
                             <td>@room.RegularRate.ToString("c")</td>
+                            <td>@room.CityName</td>
                             <td>@room.SqFt</td>
+                            <td>@room.Details</td>
                             <td>
                                 <NavLink href="@($"hotel-room/edit/{room.Id}")" class="btn btn-primary">ویرایش</NavLink>
                                 <button class="btn btn-danger" @onclick="()=>HandleDelete(room.Id)">حذف</button>
@@ -64,8 +70,11 @@
     protected override async Task OnInitializedAsync()
     {
         HotelRooms = await HotelRoomRepository.GetAllHotelRooms();
+        foreach (var hotel in HotelRooms)
+        {
+            hotel.CityName = await CityService.GetCityName(hotel.CityHotelId);
+        }
     }
-
 
     private async Task HandleDelete(int roomId)
     {

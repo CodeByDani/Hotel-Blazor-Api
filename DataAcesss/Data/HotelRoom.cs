@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAcesss.Data
 {
@@ -23,7 +20,8 @@ namespace DataAcesss.Data
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public string UpdatedBy { get; set; }
         public DateTime UpdatedDate { get; set; }
-
+        public City CityHotel { get; set; }
+        public int CityHotelId { get; set; }
         public virtual ICollection<HotelRoomImage> HotelRoomImages { get; set; }
     }
 }

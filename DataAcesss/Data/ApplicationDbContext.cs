@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAcesss.Data
 {
@@ -19,5 +14,6 @@ namespace DataAcesss.Data
         public DbSet<HotelAmenity> HotelAmenities { get; set; }
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
         public DbSet<RoomOrderDetails> RoomOrderDetails { get; set; }
+        public DbSet<City> Cities { get; set; }
     }
 }

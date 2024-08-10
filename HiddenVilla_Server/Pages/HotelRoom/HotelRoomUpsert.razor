@@ -8,6 +8,7 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
 @inject IFileUpload FileUpload
+@inject ICityService CityService
 
 <div class="row mt-2 mb-5">
     <h3 class="card-title text-info mb-3 ml-3 text-right">@Title اتاق هتل</h3>
@@ -35,6 +36,23 @@
                     <div class="form-group text-right">
                         <label>مساحت (فوت مربع)</label>
                         <InputText @bind-Value="HotelRoomModel.SqFt" class="form-control"></InputText>
+                    </div>
+                    <div class="form-group text-right">
+                        <label>انتخاب شهر</label>
+                        <select class="form-control" @bind="SelectedCity">
+                            <option value=""></option>
+                            @if (cities != null)
+                            {
+                                @foreach (var city in cities)
+                                {
+                                    <option value="@city.Id">@city.Title</option>
+                                }
+                            }
+                            else
+                            {
+                                <option>در حال بارگذاری...</option>
+                            }
+                        </select>
                     </div>
                     <div class="form-group text-right" style="height:250px;">
                         <label>جزئیات</label>
@@ -111,7 +129,9 @@
 
 @code {
     [Parameter]
+
     public int? Id { get; set; }
+    public int? SelectedCity { get; set; }
     private HotelRoomDTO HotelRoomModel { get; set; } = new HotelRoomDTO();
     private string Title { get; set; } = "ایجاد";
     private HotelRoomImageDTO RoomImage { get; set; } = new HotelRoomImageDTO();
@@ -119,11 +139,16 @@
     public BlazoredTextEditor QuillHtml { get; set; } = new BlazoredTextEditor();
     private bool IsImageUploadProcessStarted { get; set; } = false;
 
+
+    private IEnumerable<CityDto> cities;
+
+
     [CascadingParameter]
     public Task<AuthenticationState> AuthenticationState { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        cities = await CityService.GetCities();
         var authenticationState = await AuthenticationState;
         if (!authenticationState.User.IsInRole(Common.SD.Role_Admin))
         {
@@ -184,6 +209,7 @@
             if (HotelRoomModel.Id != 0 && Title == "به‌روزرسانی")
             {
                 HotelRoomModel.Details = await QuillHtml.GetHTML();
+                HotelRoomModel.CityHotelId = SelectedCity.Value;
                 //update
                 var updateRoomResult = await HotelRoomRepository.UpdateHotelRoom(HotelRoomModel.Id, HotelRoomModel);
                 if ((HotelRoomModel.ImageUrls != null && HotelRoomModel.ImageUrls.Any()) || (DeletedImageNames != null && DeletedImageNames.Any()))
@@ -207,6 +233,7 @@
             {
                 //create
                 HotelRoomModel.Details = await QuillHtml.GetHTML();
+                HotelRoomModel.CityHotelId = SelectedCity.Value;
                 var createdResult = await HotelRoomRepository.CreateHotelRoom(HotelRoomModel);
                 await AddHotelRoomImage(createdResult);
                 await JsRuntime.ToastrSuccess("اتاق هتل با موفقیت ایجاد شد.");

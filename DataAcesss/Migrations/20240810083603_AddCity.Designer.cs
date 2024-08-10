@@ -4,14 +4,16 @@ using DataAcesss.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAcesss.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240810083603_AddCity")]
+    partial class AddCity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,7 +86,7 @@ namespace DataAcesss.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("CityHotelId")
+                    b.Property<int?>("CityHotelId")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
@@ -415,9 +417,7 @@ namespace DataAcesss.Migrations
                 {
                     b.HasOne("DataAcesss.Data.City", "CityHotel")
                         .WithMany("HotelRooms")
-                        .HasForeignKey("CityHotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CityHotelId");
 
                     b.Navigation("CityHotel");
                 });

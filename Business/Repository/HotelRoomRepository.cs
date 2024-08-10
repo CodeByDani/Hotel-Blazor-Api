@@ -5,9 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Business.Repository
@@ -53,7 +51,9 @@ namespace Business.Repository
             {
                 IEnumerable<HotelRoomDTO> hotelRoomDTOs =
                             _mapper.Map<IEnumerable<HotelRoom>, IEnumerable<HotelRoomDTO>>
-                            (_db.HotelRooms.Include(x => x.HotelRoomImages));
+                            (_db.HotelRooms.Include(x => x.HotelRoomImages)
+                                .Include(x => x.CityHotel));
+
                 if (!string.IsNullOrEmpty(checkInDateStr) && !string.IsNullOrEmpty(checkOutDatestr))
                 {
                     foreach (HotelRoomDTO hotelRoom in hotelRoomDTOs)

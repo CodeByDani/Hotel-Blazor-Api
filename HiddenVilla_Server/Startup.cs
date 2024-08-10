@@ -1,23 +1,18 @@
+using AutoMapper;
+using Business.Repository;
+using Business.Repository.IRepository;
 using DataAcesss.Data;
 using HiddenVilla_Server.Data;
+using HiddenVilla_Server.Service;
+using HiddenVilla_Server.Service.IService;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Business.Repository.IRepository;
-using Business.Repository;
-using HiddenVilla_Server.Service;
-using HiddenVilla_Server.Service.IService;
-using Microsoft.AspNetCore.Identity;
 
 namespace HiddenVilla_Server
 {
@@ -48,6 +43,8 @@ namespace HiddenVilla_Server
             services.AddScoped<IHotelImagesRepository, HotelImagesRepository>();
             services.AddScoped<IRoomOrderDetailsRepository, RoomOrderDetailsRepository>();
             services.AddScoped<IFileUpload, FileUpload>();
+            services.AddScoped<ICityService, CityService>();
+            services.AddScoped<ICityRepository, CityRepository>();
             services.AddRazorPages();
             services.AddHttpContextAccessor();
             services.AddServerSideBlazor();

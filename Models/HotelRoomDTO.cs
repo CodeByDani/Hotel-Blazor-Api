@@ -13,6 +13,9 @@ namespace Models
         public int Occupancy { get; set; }
         [Range(1000, 3000, ErrorMessage = "بین 1000 تا 3000 تومان باید باشد")]
         public double RegularRate { get; set; }
+        [Required(ErrorMessage = "حتما باید شهر را انتخاب کنید")]
+        public int CityHotelId { get; set; }
+        public string CityName { get; set; }
         public string Details { get; set; }
         public string SqFt { get; set; }
         public double TotalDays { get; set; }
