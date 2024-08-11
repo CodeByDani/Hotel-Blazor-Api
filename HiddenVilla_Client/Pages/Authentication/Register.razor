@@ -1,6 +1,6 @@
 ﻿@page "/registration"
 
-<EditForm Model="UserForRegisteration" OnValidSubmit="RegisterUser" class="pt-4">
+<EditForm Model="UserForRegisteration" OnValidSubmit="RegisterUser" class="pt-4" style="direction: rtl; text-align: right;">
     <DataAnnotationsValidator />
     <div class="py-4">
         <div class=" row form-group ">
@@ -8,7 +8,7 @@
                 <div class="card border">
                     <div class="card-body px-lg-5 pt-4">
                         <h3 class="col-12 text-success text-center py-2">
-                            <strong>Sign Up</strong>
+                            <strong>ثبت نام</strong>
                         </h3>
 
                         @if (ShowRegistrationErrors)
@@ -23,30 +23,30 @@
 
                         <hr style="background-color:aliceblue" />
                         <div class="py-2">
-                            <InputText @bind-Value="UserForRegisteration.Name" class="form-control" placeholder="Name..." />
+                            <InputText @bind-Value="UserForRegisteration.Name" class="form-control" placeholder="نام..." />
                             <ValidationMessage For="(()=>UserForRegisteration.Name)" />
 
                         </div>
                         <div class="py-2">
-                            <InputText @bind-Value="UserForRegisteration.Email" class="form-control" placeholder="Email..." />
+                            <InputText @bind-Value="UserForRegisteration.Email" class="form-control" placeholder="ایمیل..." />
                             <ValidationMessage For="(()=>UserForRegisteration.Email)" />
 
                         </div>
                         <div class="py-2 input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"> +1</span>
+                                <span class="input-group-text"> +98</span>
                             </div>
-                            <InputText @bind-Value="UserForRegisteration.PhoneNo" class="form-control" placeholder="Phone number..." />
+                            <InputText @bind-Value="UserForRegisteration.PhoneNo" class="form-control" placeholder="شماره تلفن..." />
                             <ValidationMessage For="(()=>UserForRegisteration.PhoneNo)" />
 
                         </div>
                         <div class="form-row py-2">
                             <div class="col">
-                                <InputText @bind-Value="UserForRegisteration.Password" type="password" id="password" placeholder="Password..." class="form-control" />
+                                <InputText @bind-Value="UserForRegisteration.Password" type="password" id="password" placeholder="رمز عبور..." class="form-control" />
                                 <ValidationMessage For="(()=>UserForRegisteration.Password)" />
                             </div>
                             <div class="col">
-                                <InputText @bind-Value="UserForRegisteration.ConfirmPassword" type="password" id="confirm" class="form-control" placeholder="Confirm Password..." />
+                                <InputText @bind-Value="UserForRegisteration.ConfirmPassword" type="password" id="confirm" class="form-control" placeholder="تایید رمز عبور..." />
                                 <ValidationMessage For="(()=>UserForRegisteration.ConfirmPassword)" />
                             </div>
 
@@ -55,11 +55,11 @@
                         <div class="py-2">
                             @if (IsProcessing)
                             {
-                                <button type="submit" class="btn btn-success btn-block disabled"><i class="fas fa-sign-in-alt"></i> Please Wait...</button>
+                                <button type="submit" class="btn btn-success btn-block disabled"><i class="fas fa-sign-in-alt"></i> لطفا صبر کنید...</button>
                             }
                             else
                             {
-                                <button type="submit" class="btn btn-success btn-block"><i class="fas fa-sign-in-alt"></i> Register</button>
+                                <button type="submit" class="btn btn-success btn-block"><i class="fas fa-sign-in-alt"></i> ثبت نام</button>
                             }
                         </div>
 
@@ -69,8 +69,4 @@
             </div>
         </div>
     </div>
-
-
-
 </EditForm>
-
