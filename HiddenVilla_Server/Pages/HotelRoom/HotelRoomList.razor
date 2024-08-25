@@ -3,8 +3,11 @@
 @using Business.Repository.IRepository
 @using HiddenVilla_Server.Service
 @using HiddenVilla_Server.Service.IService
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
 @inject IHotelRoomRepository HotelRoomRepository
 @inject IJSRuntime JsRuntime
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject HiddenVilla_Server.Service.IService.IFileUpload FileUpload
 @inject NavigationManager NavigationManager
 @inject ICityService CityService
@@ -67,9 +70,20 @@
     private IEnumerable<HotelRoomDTO> HotelRooms { get; set; } = new List<HotelRoomDTO>();
     private int? DeleteRoomId { get; set; } = null;
     private bool IsProcessing { get; set; } = false;
+    private IdentityUser user;
+
     protected override async Task OnInitializedAsync()
     {
-        HotelRooms = await HotelRoomRepository.GetAllHotelRooms();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userClaims = authState.User;
+        if (userClaims.Identity.IsAuthenticated)
+        {
+            user = new IdentityUser
+            {
+                Id = userClaims.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value
+            };
+        }
+        HotelRooms = await HotelRoomRepository.GetAllHotelRooms(user.Id);
         foreach (var hotel in HotelRooms)
         {
             hotel.CityName = await CityService.GetCityName(hotel.CityHotelId);
@@ -96,7 +110,7 @@
 
             await HotelRoomRepository.DeleteHotelRoom(DeleteRoomId.Value);
             await JsRuntime.ToastrSuccess("اتاق هتل با موفقیت حذف شد.");
-            HotelRooms = await HotelRoomRepository.GetAllHotelRooms();
+            HotelRooms = await HotelRoomRepository.GetAllHotelRooms(user.Id);
         }
         await JsRuntime.InvokeVoidAsync("HideDeleteConfirmationModal");
         IsProcessing = false;

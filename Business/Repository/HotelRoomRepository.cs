@@ -56,14 +56,15 @@ namespace Business.Repository
             return 0;
         }
 
-        public async Task<IEnumerable<HotelRoomDTO>> GetAllHotelRooms(string checkInDateStr, string checkOutDatestr)
+        public async Task<IEnumerable<HotelRoomDTO>> GetAllHotelRooms(string userId, string checkInDateStr, string checkOutDatestr)
         {
             try
             {
                 IEnumerable<HotelRoomDTO> hotelRoomDTOs =
                             _mapper.Map<IEnumerable<HotelRoom>, IEnumerable<HotelRoomDTO>>
                             (_db.HotelRooms.Include(x => x.HotelRoomImages)
-                                .Include(x => x.CityHotel));
+                                .Include(x => x.CityHotel)
+                                .Where(p => p.UserId == userId));
 
                 if (!string.IsNullOrEmpty(checkInDateStr) && !string.IsNullOrEmpty(checkOutDatestr))
                 {
