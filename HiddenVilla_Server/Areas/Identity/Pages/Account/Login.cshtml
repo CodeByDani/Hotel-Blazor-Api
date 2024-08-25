@@ -1,75 +1,85 @@
 ﻿@page
 @model LoginModel
 
-
 @{
     ViewData["Title"] = "ورود";
 }
 
-<h1>@ViewData["Title"]</h1>
-<div class="row" style="direction: rtl; text-align: right;">
-    <div class="col-md-4">
-        <section>
-            <form id="account" method="post">
-                <h4>استفاده از حساب محلی برای ورود</h4>
-                <hr />
-                <div asp-validation-summary="All" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="Input.Email"></label>
-                    <input asp-for="Input.Email" class="form-control" />
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+<h1 class="text-center mt-5">@ViewData["Title"]</h1>
+
+<div class="container">
+    <div class="row justify-content-center" style="direction: rtl; text-align: right;">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <section>
+                        <h4 class="card-title text-center mb-4">استفاده از حساب محلی برای ورود</h4>
+                        <hr />
+                        <form id="account" method="post">
+                            <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="Input.Email" class="form-label"></label>
+                                <input asp-for="Input.Email" class="form-control" placeholder="ایمیل خود را وارد کنید" />
+                                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="Input.Password" class="form-label"></label>
+                                <input asp-for="Input.Password" class="form-control" placeholder="رمز عبور خود را وارد کنید" />
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input asp-for="Input.RememberMe" class="form-check-input" />
+                                <label asp-for="Input.RememberMe" class="form-check-label">
+                                    @Html.DisplayNameFor(m => m.Input.RememberMe)
+                                </label>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-block">ورود</button>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <p>
+                                    <a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none">رمز عبور خود را فراموش کرده‌اید؟</a>
+                                </p>
+                                <p>
+                                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none">ثبت نام به عنوان کاربر جدید</a>
+                                </p>
+                            </div>
+                        </form>
+                    </section>
                 </div>
-                <div class="form-group">
-                    <label asp-for="Input.Password"></label>
-                    <input asp-for="Input.Password" class="form-control" />
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label asp-for="Input.RememberMe">
-                            <input asp-for="Input.RememberMe" />
-                            @Html.DisplayNameFor(m => m.Input.RememberMe)
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary">ورود</button>
-                </div>
-                <div class="form-group">
-                    <p>
-                        <a id="forgot-password" asp-page="./ForgotPassword">رمز عبور خود را فراموش کرده‌اید؟</a>
-                    </p>
-                    <p>
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">ثبت نام به عنوان کاربر جدید</a>
-                    </p>
-                    @* <p>
-                    <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">ارسال مجدد تأییدیه ایمیل</a>
-                    </p>*@
-                </div>
-            </form>
-        </section>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="ورود با استفاده از حساب @provider.DisplayName">@provider.DisplayName</button>
-                                }
-                            </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <section>
+                @{
+                    if ((Model.ExternalLogins?.Count ?? 0) > 0)
+                    {
+                        <div class="card shadow-lg mt-4 mt-md-0">
+                            <div class="card-body">
+                                <h5 class="card-title text-center">ورود با استفاده از حساب خارجی</h5>
+                                <hr />
+                                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                                    <div class="d-grid gap-2">
+                                        @foreach (var provider in Model.ExternalLogins)
+                                        {
+                                            <button type="submit" class="btn btn-outline-primary" name="provider" value="@provider.Name" title="ورود با استفاده از حساب @provider.DisplayName">
+                                                @provider.DisplayName
+                                            </button>
+                                        }
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                    </form>
+                    }
                 }
-            }
-        </section>
+            </section>
+        </div>
     </div>
 </div>
 

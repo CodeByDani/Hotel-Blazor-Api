@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAcesss.Data
 {
@@ -13,8 +9,6 @@ namespace DataAcesss.Data
         public int Id { get; set; }
         [Required]
         public string UserId { get; set; }
-        [Required]
-        public string StripeSessionId { get; set; }
         [Required]
         public DateTime CheckInDate { get; set; }
         [Required]
@@ -34,5 +28,6 @@ namespace DataAcesss.Data
         [ForeignKey("RoomId")]
         public HotelRoom HotelRoom { get; set; }
         public string Status { get; set; }
+        public virtual ApplicationUser User { get; set; }
     }
 }

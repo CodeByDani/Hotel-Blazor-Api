@@ -6,9 +6,11 @@
 @inject IHotelRoomRepository HotelRoomRepository
 @inject IHotelImagesRepository HotelImagesRepository
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IJSRuntime JsRuntime
 @inject IFileUpload FileUpload
 @inject ICityService CityService
+@inject IAmenityRepository AmenityRepository
 
 <div class="row mt-2 mb-5">
     <h3 class="card-title text-info mb-3 ml-3 text-right">@Title اتاق هتل</h3>
@@ -54,6 +56,51 @@
                             }
                         </select>
                     </div>
+                    
+                    <div class="d-flex justify-content-around flex-row-reverse text-center">
+                        @foreach (var type in Type)
+                        {
+                            <div class="mx-3">
+                                <!-- Image -->
+                                <img src="@GetImageForType(type)" width="100px" height="100px" alt="@type" class="type-image mb-2 rounded-pill" />
+            
+                                <!-- Radio Button -->
+                                <input type="radio" id="@type" name="propertyType" value="@type" @onchange="() => SelectType(type)" 
+                                       checked="@(SelectedType == type)" class="form-check-input mb-2 mt-2" />
+
+                                <!-- Text (Label) -->
+                                <label for="@type" class="d-block text-muted">
+                                    @type
+                                </label>
+                            </div>
+                        }
+                    </div>
+
+                    <div>
+                        <h3 class="text-right mb-4">انتخاب امکانات هتل</h3>
+
+                        <div class="row">
+                            @if (cities != null)
+                            {
+                                @foreach (var amenity in amenities)
+                                {
+                                    <div class="col-md-3 mb-3">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-inpu" id="amenity_@amenity.Id" @bind="amenity.IsSelected" value="@amenity.Id"/>
+                                            <label class="form-check-label p-2" for="amenity_@amenity.Id">
+                                                <i class="@amenity.IconStyle"></i> @amenity.Name
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p>در حال بارگذاری...</p>
+                            }
+                        </div>
+                    </div>
+
                     <div class="form-group text-right" style="height:250px;">
                         <label>جزئیات</label>
                         @*<InputTextArea @bind-Value="HotelRoomModel.Details" class="form-control"></InputTextArea>*@
@@ -127,216 +174,3 @@
     </div>
 </div>
 
-@code {
-    [Parameter]
-
-    public int? Id { get; set; }
-    public int? SelectedCity { get; set; }
-    private HotelRoomDTO HotelRoomModel { get; set; } = new HotelRoomDTO();
-    private string Title { get; set; } = "ایجاد";
-    private HotelRoomImageDTO RoomImage { get; set; } = new HotelRoomImageDTO();
-    private List<string> DeletedImageNames { get; set; } = new List<string>();
-    public BlazoredTextEditor QuillHtml { get; set; } = new BlazoredTextEditor();
-    private bool IsImageUploadProcessStarted { get; set; } = false;
-
-
-    private IEnumerable<CityDto> cities;
-
-
-    [CascadingParameter]
-    public Task<AuthenticationState> AuthenticationState { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        cities = await CityService.GetCities();
-        var authenticationState = await AuthenticationState;
-        if (!authenticationState.User.IsInRole(Common.SD.Role_Admin))
-        {
-            var uri = new Uri(NavigationManager.Uri);
-            NavigationManager.NavigateTo($"/identity/account/login?returnUrl={uri.LocalPath}");
-        }
-        if (Id != null)
-        {
-            //updating
-            Title = "به‌روزرسانی";
-            HotelRoomModel = await HotelRoomRepository.GetHotelRoom(Id.Value);
-            if (HotelRoomModel?.HotelRoomImages != null)
-            {
-                HotelRoomModel.ImageUrls = HotelRoomModel.HotelRoomImages.Select(u => u.RoomImageUrl).ToList();
-            }
-        }
-        else
-        {
-            //create
-            HotelRoomModel = new HotelRoomDTO();
-        }
-    }
-
-    protected async override Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
-            return;
-        bool loading = true;
-        while (loading)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(HotelRoomModel.Details))
-                {
-                    await this.QuillHtml.LoadHTMLContent(HotelRoomModel.Details);
-                }
-                loading = false;
-            }
-            catch
-            {
-                await Task.Delay(10);
-                loading = true;
-            }
-        }
-    }
-
-    private async Task HandleHotelRoomUpsert()
-    {
-        try
-        {
-            var roomDetailsByName = await HotelRoomRepository.IsRoomUnique(HotelRoomModel.Name, HotelRoomModel.Id);
-            if (roomDetailsByName != null)
-            {
-                await JsRuntime.ToastrError("نام اتاق قبلاً وجود دارد.");
-                return;
-            }
-
-            if (HotelRoomModel.Id != 0 && Title == "به‌روزرسانی")
-            {
-                HotelRoomModel.Details = await QuillHtml.GetHTML();
-                HotelRoomModel.CityHotelId = SelectedCity.Value;
-                //update
-                var updateRoomResult = await HotelRoomRepository.UpdateHotelRoom(HotelRoomModel.Id, HotelRoomModel);
-                if ((HotelRoomModel.ImageUrls != null && HotelRoomModel.ImageUrls.Any()) || (DeletedImageNames != null && DeletedImageNames.Any()))
-                {
-                    if (DeletedImageNames != null && DeletedImageNames.Any())
-                    {
-                        foreach (var deletedImageName in DeletedImageNames)
-                        {
-                            var imageName = deletedImageName.Replace($"{NavigationManager.BaseUri}RoomImages/", "");
-
-                            var result = FileUpload.DeleteFile(imageName);
-                            await HotelImagesRepository.DeleteHotelImageByImageUrl(deletedImageName);
-                        }
-                    }
-
-                    await AddHotelRoomImage(updateRoomResult);
-                }
-                await JsRuntime.ToastrSuccess("اتاق هتل با موفقیت به‌روزرسانی شد.");
-            }
-            else
-            {
-                //create
-                HotelRoomModel.Details = await QuillHtml.GetHTML();
-                HotelRoomModel.CityHotelId = SelectedCity.Value;
-                var createdResult = await HotelRoomRepository.CreateHotelRoom(HotelRoomModel);
-                await AddHotelRoomImage(createdResult);
-                await JsRuntime.ToastrSuccess("اتاق هتل با موفقیت ایجاد شد.");
-            }
-        }
-        catch (Exception ex)
-        {
-            //log exceptions
-        }
-
-        NavigationManager.NavigateTo("hotel-room");
-    }
-
-    private async Task HandleImageUpload(InputFileChangeEventArgs e)
-    {
-        IsImageUploadProcessStarted = true;
-        try
-        {
-            var images = new List<string>();
-            if (e.GetMultipleFiles().Count > 0)
-            {
-                foreach (var file in e.GetMultipleFiles())
-                {
-                    System.IO.FileInfo fileInfo = new System.IO.FileInfo(file.Name);
-                    if (fileInfo.Extension.ToLower() == ".jpg" ||
-                        fileInfo.Extension.ToLower() == ".png" ||
-                        fileInfo.Extension.ToLower() == ".jpeg")
-                    {
-                        var uploadedImagePath = await FileUpload.UploadFile(file);
-                        images.Add(uploadedImagePath);
-                    }
-                    else
-                    {
-                        await JsRuntime.ToastrError("لطفاً فقط فایل‌های .jpg/.jpeg/.png انتخاب کنید");
-                        return;
-                    }
-                }
-
-                if (images.Any())
-                {
-                    if (HotelRoomModel.ImageUrls != null && HotelRoomModel.ImageUrls.Any())
-                    {
-                        HotelRoomModel.ImageUrls.AddRange(images);
-                    }
-                    else
-                    {
-                        HotelRoomModel.ImageUrls = new List<string>();
-                        HotelRoomModel.ImageUrls.AddRange(images);
-                    }
-                }
-                else
-                {
-                    await JsRuntime.ToastrError("بارگذاری تصویر ناموفق بود");
-                    return;
-                }
-            }
-            IsImageUploadProcessStarted = false;
-        }
-        catch (Exception ex)
-        {
-            await JsRuntime.ToastrError(ex.Message);
-        }
-    }
-
-    private async Task AddHotelRoomImage(HotelRoomDTO roomDetails)
-    {
-        foreach (var imageUrl in HotelRoomModel.ImageUrls)
-        {
-            if (HotelRoomModel.HotelRoomImages == null || HotelRoomModel.HotelRoomImages.Where(x => x.RoomImageUrl == imageUrl).Count() == 0)
-            {
-
-                RoomImage = new HotelRoomImageDTO()
-                    {
-                        RoomId = roomDetails.Id,
-                        RoomImageUrl = imageUrl
-                    };
-                await HotelImagesRepository.CreateHotelRoomImage(RoomImage);
-            }
-        }
-    }
-
-    internal async Task DeletePhoto(string imageUrl)
-    {
-        try
-        {
-            var imageIndex = HotelRoomModel.ImageUrls.FindIndex(x => x == imageUrl);
-            var imageName = imageUrl.Replace($"{NavigationManager.BaseUri}RoomImages/", "");
-            if (HotelRoomModel.Id == 0 && Title == "ایجاد")
-            {
-                var result = FileUpload.DeleteFile(imageName);
-            }
-            else
-            {
-                //update
-                DeletedImageNames ??= new List<string>();
-                DeletedImageNames.Add(imageUrl);
-            }
-            HotelRoomModel.ImageUrls.RemoveAt(imageIndex);
-        }
-        catch (Exception ex)
-        {
-            await JsRuntime.ToastrError(ex.Message);
-        }
-
-    }
-}

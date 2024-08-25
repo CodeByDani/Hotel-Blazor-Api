@@ -22,6 +22,11 @@ namespace DataAcesss.Data
         public DateTime UpdatedDate { get; set; }
         public City CityHotel { get; set; }
         public int CityHotelId { get; set; }
+        public PlaceType PlaceType { get; set; }
         public virtual ICollection<HotelRoomImage> HotelRoomImages { get; set; }
+        public virtual ApplicationUser User { get; set; }
+
+        public string UserId { get; set; }
+        public virtual ICollection<HotelRoomHotelAmenity> HotelRoomHotelAmenity { get; set; }
     }
 }

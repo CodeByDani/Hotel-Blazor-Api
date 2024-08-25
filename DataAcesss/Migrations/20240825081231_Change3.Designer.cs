@@ -4,14 +4,16 @@ using DataAcesss.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAcesss.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240825081231_Change3")]
+    partial class Change3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,28 +110,6 @@ namespace DataAcesss.Migrations
                     b.ToTable("HotelRooms");
                 });
 
-            modelBuilder.Entity("DataAcesss.Data.HotelRoomHotelAmenity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int>("HotelAmenityId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("HotelRoomId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HotelAmenityId");
-
-                    b.HasIndex("HotelRoomId");
-
-                    b.ToTable("HotelRoomHotelAmenities");
-                });
-
             modelBuilder.Entity("DataAcesss.Data.HotelRoomImage", b =>
                 {
                     b.Property<int>("Id")
@@ -208,6 +188,21 @@ namespace DataAcesss.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RoomOrderDetails");
+                });
+
+            modelBuilder.Entity("HotelAmenityHotelRoom", b =>
+                {
+                    b.Property<int>("HotelAmenitiesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HotelRoomsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("HotelAmenitiesId", "HotelRoomsId");
+
+                    b.HasIndex("HotelRoomsId");
+
+                    b.ToTable("HotelAmenityHotelRoom");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -416,9 +411,6 @@ namespace DataAcesss.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
-                    b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -434,31 +426,12 @@ namespace DataAcesss.Migrations
                         .IsRequired();
 
                     b.HasOne("DataAcesss.Data.ApplicationUser", "User")
-                        .WithMany("HotelRooms")
+                        .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("CityHotel");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAcesss.Data.HotelRoomHotelAmenity", b =>
-                {
-                    b.HasOne("DataAcesss.Data.HotelAmenity", "HotelAmenity")
-                        .WithMany("HotelAmenities")
-                        .HasForeignKey("HotelAmenityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAcesss.Data.HotelRoom", "HotelRoom")
-                        .WithMany("HotelRoomHotelAmenity")
-                        .HasForeignKey("HotelRoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("HotelAmenity");
-
-                    b.Navigation("HotelRoom");
                 });
 
             modelBuilder.Entity("DataAcesss.Data.HotelRoomImage", b =>
@@ -487,7 +460,7 @@ namespace DataAcesss.Migrations
                         .IsRequired();
 
                     b.HasOne("DataAcesss.Data.ApplicationUser", "User")
-                        .WithMany("OrderDetailsCollection")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -495,6 +468,21 @@ namespace DataAcesss.Migrations
                     b.Navigation("HotelRoom");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HotelAmenityHotelRoom", b =>
+                {
+                    b.HasOne("DataAcesss.Data.HotelAmenity", null)
+                        .WithMany()
+                        .HasForeignKey("HotelAmenitiesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAcesss.Data.HotelRoom", null)
+                        .WithMany()
+                        .HasForeignKey("HotelRoomsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -553,23 +541,9 @@ namespace DataAcesss.Migrations
                     b.Navigation("HotelRooms");
                 });
 
-            modelBuilder.Entity("DataAcesss.Data.HotelAmenity", b =>
-                {
-                    b.Navigation("HotelAmenities");
-                });
-
             modelBuilder.Entity("DataAcesss.Data.HotelRoom", b =>
                 {
-                    b.Navigation("HotelRoomHotelAmenity");
-
                     b.Navigation("HotelRoomImages");
-                });
-
-            modelBuilder.Entity("DataAcesss.Data.ApplicationUser", b =>
-                {
-                    b.Navigation("HotelRooms");
-
-                    b.Navigation("OrderDetailsCollection");
                 });
 #pragma warning restore 612, 618
         }

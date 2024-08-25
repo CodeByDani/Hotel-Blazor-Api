@@ -10,7 +10,7 @@ namespace Business.Mapper
         {
             CreateMap<HotelRoomDTO, HotelRoom>();
             CreateMap<HotelRoom, HotelRoomDTO>();
-            CreateMap<HotelRoom, HotelRoomDTO>();
+            CreateMap<HotelRoomDTO, HotelRoom>();
             CreateMap<CityDto, City>();
             CreateMap<City, CityDto>();
             CreateMap<HotelAmenity, HotelAmenityDTO>().ReverseMap();

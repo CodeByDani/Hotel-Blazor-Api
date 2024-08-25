@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30711.63
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HiddenVilla_Server", "HiddenVilla_Server\HiddenVilla_Server.csproj", "{61EEDD90-0AE6-415E-852C-F879B3E35E98}"
 EndProject
@@ -12,10 +12,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "Business\Business.csproj", "{8B044D2F-8127-476B-9C91-5A559DBDAADD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{C3653B5A-3EBF-4970-84C9-89EC99F26ABF}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HiddenVilla_Api", "HiddenVilla_Api\HiddenVilla_Api.csproj", "{159A49A2-89E6-4692-93A9-3A389C5A4FD1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HiddenVilla_Client", "HiddenVilla_Client\HiddenVilla_Client.csproj", "{F21D2BA0-A968-468C-8307-705D78CC2011}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,14 +39,6 @@ Global
 		{C3653B5A-3EBF-4970-84C9-89EC99F26ABF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3653B5A-3EBF-4970-84C9-89EC99F26ABF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3653B5A-3EBF-4970-84C9-89EC99F26ABF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{159A49A2-89E6-4692-93A9-3A389C5A4FD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{159A49A2-89E6-4692-93A9-3A389C5A4FD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{159A49A2-89E6-4692-93A9-3A389C5A4FD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{159A49A2-89E6-4692-93A9-3A389C5A4FD1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F21D2BA0-A968-468C-8307-705D78CC2011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F21D2BA0-A968-468C-8307-705D78CC2011}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F21D2BA0-A968-468C-8307-705D78CC2011}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F21D2BA0-A968-468C-8307-705D78CC2011}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

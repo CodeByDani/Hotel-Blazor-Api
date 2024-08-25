@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataAcesss.Data
 {
@@ -14,5 +9,7 @@ namespace DataAcesss.Data
         public string RoomImageUrl { get; set; }
         [ForeignKey("RoomId")]
         public virtual HotelRoom HotelRoom { get; set; }
+        public virtual ApplicationUser User { get; set; }
+
     }
 }

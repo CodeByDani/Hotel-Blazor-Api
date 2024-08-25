@@ -4,20 +4,82 @@ using DataAcesss.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAcesss.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240825074624_Change")]
+    partial class Change
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.0");
+
+            modelBuilder.Entity("DataAcesss.Data.ApplicationUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ApplicationUser");
+                });
 
             modelBuilder.Entity("DataAcesss.Data.City", b =>
                 {
@@ -96,8 +158,8 @@ namespace DataAcesss.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -106,28 +168,6 @@ namespace DataAcesss.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("HotelRooms");
-                });
-
-            modelBuilder.Entity("DataAcesss.Data.HotelRoomHotelAmenity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int>("HotelAmenityId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("HotelRoomId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HotelAmenityId");
-
-                    b.HasIndex("HotelRoomId");
-
-                    b.ToTable("HotelRoomHotelAmenities");
                 });
 
             modelBuilder.Entity("DataAcesss.Data.HotelRoomImage", b =>
@@ -143,8 +183,8 @@ namespace DataAcesss.Migrations
                     b.Property<string>("RoomImageUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -199,15 +239,33 @@ namespace DataAcesss.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId1")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RoomId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId1");
 
                     b.ToTable("RoomOrderDetails");
+                });
+
+            modelBuilder.Entity("HotelAmenityHotelRoom", b =>
+                {
+                    b.Property<int>("HotelAmenitiesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HotelRoomsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("HotelAmenitiesId", "HotelRoomsId");
+
+                    b.HasIndex("HotelRoomsId");
+
+                    b.ToTable("HotelAmenityHotelRoom");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -273,10 +331,6 @@ namespace DataAcesss.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -328,8 +382,6 @@ namespace DataAcesss.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -412,19 +464,6 @@ namespace DataAcesss.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("DataAcesss.Data.ApplicationUser", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("ApplicationUser");
-                });
-
             modelBuilder.Entity("DataAcesss.Data.HotelRoom", b =>
                 {
                     b.HasOne("DataAcesss.Data.City", "CityHotel")
@@ -435,30 +474,13 @@ namespace DataAcesss.Migrations
 
                     b.HasOne("DataAcesss.Data.ApplicationUser", "User")
                         .WithMany("HotelRooms")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("CityHotel");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAcesss.Data.HotelRoomHotelAmenity", b =>
-                {
-                    b.HasOne("DataAcesss.Data.HotelAmenity", "HotelAmenity")
-                        .WithMany("HotelAmenities")
-                        .HasForeignKey("HotelAmenityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAcesss.Data.HotelRoom", "HotelRoom")
-                        .WithMany("HotelRoomHotelAmenity")
-                        .HasForeignKey("HotelRoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("HotelAmenity");
-
-                    b.Navigation("HotelRoom");
                 });
 
             modelBuilder.Entity("DataAcesss.Data.HotelRoomImage", b =>
@@ -488,13 +510,26 @@ namespace DataAcesss.Migrations
 
                     b.HasOne("DataAcesss.Data.ApplicationUser", "User")
                         .WithMany("OrderDetailsCollection")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("HotelRoom");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HotelAmenityHotelRoom", b =>
+                {
+                    b.HasOne("DataAcesss.Data.HotelAmenity", null)
+                        .WithMany()
+                        .HasForeignKey("HotelAmenitiesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAcesss.Data.HotelRoom", null)
+                        .WithMany()
+                        .HasForeignKey("HotelRoomsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -548,28 +583,21 @@ namespace DataAcesss.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DataAcesss.Data.City", b =>
-                {
-                    b.Navigation("HotelRooms");
-                });
-
-            modelBuilder.Entity("DataAcesss.Data.HotelAmenity", b =>
-                {
-                    b.Navigation("HotelAmenities");
-                });
-
-            modelBuilder.Entity("DataAcesss.Data.HotelRoom", b =>
-                {
-                    b.Navigation("HotelRoomHotelAmenity");
-
-                    b.Navigation("HotelRoomImages");
-                });
-
             modelBuilder.Entity("DataAcesss.Data.ApplicationUser", b =>
                 {
                     b.Navigation("HotelRooms");
 
                     b.Navigation("OrderDetailsCollection");
+                });
+
+            modelBuilder.Entity("DataAcesss.Data.City", b =>
+                {
+                    b.Navigation("HotelRooms");
+                });
+
+            modelBuilder.Entity("DataAcesss.Data.HotelRoom", b =>
+                {
+                    b.Navigation("HotelRoomImages");
                 });
 #pragma warning restore 612, 618
         }

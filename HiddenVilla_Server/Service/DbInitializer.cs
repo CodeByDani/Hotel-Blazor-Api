@@ -27,6 +27,7 @@ namespace HiddenVilla_Server.Service
         public void Initalize()
         {
             AddCities();
+            AddAmenity();
             try
             {
                 if (_db.Database.GetPendingMigrations().Count() > 0)
@@ -54,6 +55,35 @@ namespace HiddenVilla_Server.Service
 
             IdentityUser user = _db.Users.FirstOrDefault(u => u.Email == "admin@gmail.com");
             _userManager.AddToRoleAsync(user, SD.Role_Admin).GetAwaiter().GetResult();
+        }
+
+        private void AddAmenity()
+        {
+            var amenities = new List<HotelAmenity>
+            {
+                new HotelAmenity { Name = "استخر", IconStyle = "fa-solid fa-person-swimming" },
+                new HotelAmenity { Name = "آب", IconStyle = "fa-solid fa-water" },
+                new HotelAmenity { Name = "برق", IconStyle = "fa-solid fa-bolt" },
+                new HotelAmenity { Name = "سیستم گرمایشی", IconStyle = "fa-solid fa-fire" },
+                new HotelAmenity { Name = "گاز", IconStyle = "fa-solid fa-wind" },
+                new HotelAmenity { Name = "سیستم سرمایشی", IconStyle = "fa-solid fa-snowflake" },
+                new HotelAmenity { Name = "آنتن دهی موبایل", IconStyle = "fa-solid fa-signal" },
+                new HotelAmenity { Name = "اینترنت", IconStyle = "fa-solid fa-wifi" },
+                new HotelAmenity { Name = "تلویزیون", IconStyle = "fa-solid fa-tv" },
+                new HotelAmenity { Name = "سرویش بهداشتی", IconStyle = "fa-solid fa-toilet" },
+                new HotelAmenity { Name = "کنسول بازی", IconStyle = "fa-solid fa-gamepad" },
+                new HotelAmenity { Name = "آسانسور", IconStyle = "fa-solid fa-elevator" },
+                new HotelAmenity { Name = "رستوران", IconStyle = "fa-solid fa-utensils" },
+                new HotelAmenity { Name = "نمازخانه", IconStyle = "fa-solid fa-person-praying" },
+                new HotelAmenity { Name = "قهوه ساز", IconStyle = "fa-solid fa-mug-saucer" },
+                new HotelAmenity { Name = "مبلمان", IconStyle = "fa-solid fa-couch" },
+            };
+            if (!_db.HotelAmenities.Any())
+            {
+                _db.HotelAmenities.AddRange(amenities);
+                _db.SaveChanges();
+            }
+
         }
 
         private void AddCities()

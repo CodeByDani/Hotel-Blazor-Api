@@ -2,7 +2,6 @@ using AutoMapper;
 using Business.Repository;
 using Business.Repository.IRepository;
 using DataAcesss.Data;
-using HiddenVilla_Server.Data;
 using HiddenVilla_Server.Service;
 using HiddenVilla_Server.Service.IService;
 using Microsoft.AspNetCore.Builder;
@@ -48,7 +47,6 @@ namespace HiddenVilla_Server
             services.AddRazorPages();
             services.AddHttpContextAccessor();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

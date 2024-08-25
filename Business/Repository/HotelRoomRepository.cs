@@ -22,11 +22,22 @@ namespace Business.Repository
 
         public async Task<HotelRoomDTO> CreateHotelRoom(HotelRoomDTO hotelRoomDTO)
         {
-            HotelRoom hotelRoom = _mapper.Map<HotelRoomDTO, HotelRoom>(hotelRoomDTO);
-            hotelRoom.CreatedDate = DateTime.Now;
-            hotelRoom.CreatedBy = "";
+            HotelRoom hotelRoom = new HotelRoom()
+            {
+                Name = hotelRoomDTO.Name,
+                CityHotelId = hotelRoomDTO.CityHotelId,
+                Details = hotelRoomDTO.Details,
+                UserId = hotelRoomDTO.UserId,
+                Occupancy = hotelRoomDTO.Occupancy,
+                SqFt = hotelRoomDTO.SqFt,
+                RegularRate = hotelRoomDTO.RegularRate,
+                CreatedDate = DateTime.Now,
+                CreatedBy = "",
+                PlaceType = SetPlaceType(hotelRoomDTO.PlaceType),
+            };
             var addedHotelRoom = await _db.HotelRooms.AddAsync(hotelRoom);
             await _db.SaveChangesAsync();
+            await AddAmenitiesToHotelRoomAsync(addedHotelRoom.Entity.Id, hotelRoomDTO.Ideas);
             return _mapper.Map<HotelRoom, HotelRoomDTO>(addedHotelRoom.Entity);
         }
 
@@ -156,12 +167,25 @@ namespace Business.Repository
                 if (roomId == hotelRoomDTO.Id)
                 {
                     //valid
-                    HotelRoom roomDetails = await _db.HotelRooms.FindAsync(roomId);
-                    HotelRoom room = _mapper.Map<HotelRoomDTO, HotelRoom>(hotelRoomDTO, roomDetails);
+                    var amenities = _db.HotelRoomHotelAmenities
+                        .Where(hh => hh.HotelRoomId == roomId)
+                        .Select(hh => hh.HotelAmenity)
+                        .ToList();
+                    _db.HotelAmenities.RemoveRange(amenities);
+                    HotelRoom room = await _db.HotelRooms.FindAsync(roomId);
+                    room.Name = hotelRoomDTO.Name;
+                    room.CityHotelId = hotelRoomDTO.CityHotelId;
+                    room.Details = hotelRoomDTO.Details;
+                    room.UserId = hotelRoomDTO.UserId;
+                    room.Occupancy = hotelRoomDTO.Occupancy;
+                    room.SqFt = hotelRoomDTO.SqFt;
+                    room.RegularRate = hotelRoomDTO.RegularRate;
+                    room.PlaceType = SetPlaceType(hotelRoomDTO.PlaceType);
                     room.UpdatedBy = "";
                     room.UpdatedDate = DateTime.Now;
                     var updatedRoom = _db.HotelRooms.Update(room);
                     await _db.SaveChangesAsync();
+                    await AddAmenitiesToHotelRoomAsync(roomId, hotelRoomDTO.Ideas);
                     return _mapper.Map<HotelRoom, HotelRoomDTO>(updatedRoom.Entity);
                 }
                 else
@@ -175,5 +199,56 @@ namespace Business.Repository
                 return null;
             }
         }
+
+        private PlaceType SetPlaceType(string type)
+        {
+            return type switch
+            {
+                "هتل" => PlaceType.Hotel,
+                "آپارتمان" => PlaceType.Apartment,
+                "ویلا" => PlaceType.Villa,
+                "باغ" => PlaceType.Garden,
+                "Hotel" => PlaceType.Hotel,
+                "Apartment" => PlaceType.Apartment,
+                "Villa" => PlaceType.Villa,
+                "Garden" => PlaceType.Garden,
+            };
+        }
+
+        private async Task AddAmenitiesToHotelRoomAsync(int roomId, List<int> amenityIds)
+        {
+            // Retrieve the hotel room with existing amenities
+            var hotelRoom = await _db.HotelRooms
+                .Include(r => r.HotelRoomHotelAmenity)
+                .ThenInclude(rha => rha.HotelAmenity)
+                .FirstOrDefaultAsync(r => r.Id == roomId);
+
+            if (hotelRoom == null)
+            {
+                throw new Exception("Hotel room not found.");
+            }
+
+            // Retrieve the amenities to add
+            var amenitiesToAdd = await _db.HotelAmenities
+                .Where(a => amenityIds.Contains(a.Id))
+                .ToListAsync();
+
+            // Add new amenities to the hotel room
+            foreach (var amenity in amenitiesToAdd)
+            {
+                if (!hotelRoom.HotelRoomHotelAmenity.Any(rha => rha.HotelAmenityId == amenity.Id))
+                {
+                    hotelRoom.HotelRoomHotelAmenity.Add(new HotelRoomHotelAmenity
+                    {
+                        HotelRoomId = hotelRoom.Id,
+                        HotelAmenityId = amenity.Id
+                    });
+                }
+            }
+
+            // Save changes to the database
+            await _db.SaveChangesAsync();
+        }
+
     }
 }

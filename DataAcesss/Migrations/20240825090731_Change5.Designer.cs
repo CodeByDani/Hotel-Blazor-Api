@@ -4,14 +4,16 @@ using DataAcesss.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAcesss.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240825090731_Change5")]
+    partial class Change5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,7 +129,7 @@ namespace DataAcesss.Migrations
 
                     b.HasIndex("HotelRoomId");
 
-                    b.ToTable("HotelRoomHotelAmenities");
+                    b.ToTable("HotelRoomHotelAmenity");
                 });
 
             modelBuilder.Entity("DataAcesss.Data.HotelRoomImage", b =>
