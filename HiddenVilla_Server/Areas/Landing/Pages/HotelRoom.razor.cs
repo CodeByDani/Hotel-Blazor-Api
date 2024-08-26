@@ -72,18 +72,6 @@ namespace HiddenVilla_Server.Areas.Landing.Pages
                 }
             }
         }
-
-        public async Task SetDetailsURl(int id)
-        {
-            var queryParams = new Dictionary<string, object>
-            {
-                { "endDate", HomeModel.EndDate.ToString("yyyy-MM-dd") },
-                { "startDate", HomeModel.StartDate.ToString("yyyy-MM-dd") },
-                { "noOfNights", HomeModel.NoOfNights.ToString() },
-            };
-            var queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
-            NavigationManager.NavigateTo($"landing/hotel/room-details/{id}?{queryString}", true);
-        }
         private async Task SaveBookingInfo()
         {
             HomeModel.EndDate = HomeModel.StartDate.AddDays(HomeModel.NoOfNights);

@@ -7,11 +7,17 @@
 @inject NavigationManager  NavigationManager
 @using Business.Repository.IRepository
 @using HiddenVilla_Server.Model
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
 @inject IJSRuntime jsRuntime
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IHotelRoomRepository hotelRoomService
 @inject IRoomOrderDetailsRepository roomOrderDetailsService
 @layout LandingLayout
 
+@attribute [Authorize(Roles = SD.Role_Admin)]
+<div style="height:10vh ;background: rgba(0, 0, 0, 0.5); /* Black with 70% opacity */ color: white; /* White text color to contrast the black background */">
+</div>
 @if (HotelBooking?.OrderDetails?.HotelRoomDTO?.HotelRoomImages == null)
 {
     <div class="spinner"></div>
@@ -194,10 +200,20 @@ else
     private int NoOfNights { get; set; } = 1;
     private DateTime StartDate { get; set; }
     private DateTime EndDate { get; set; }
+    private IdentityUser user;
 
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userClaims = authState.User;
+        if (userClaims.Identity.IsAuthenticated)
+        {
+            user = new IdentityUser
+            {
+                Id = userClaims.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value
+            };
+        }
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
 
@@ -226,6 +242,7 @@ else
                 HotelBooking.OrderDetails.CheckInDate = StartDate;
                 HotelBooking.OrderDetails.CheckOutDate = EndDate;
                 HotelBooking.OrderDetails.HotelRoomDTO.TotalDays = NoOfNights;
+                HotelBooking.OrderDetails.UserId = user.Id;
                 HotelBooking.OrderDetails.HotelRoomDTO.TotalAmount =
                     NoOfNights * HotelBooking.OrderDetails.HotelRoomDTO.RegularRate;
             }
@@ -246,6 +263,7 @@ else
 
         HotelBooking.OrderDetails.CheckOutDate = HotelBooking.OrderDetails.CheckInDate.AddDays(NoOfNights);
         HotelBooking.OrderDetails.HotelRoomDTO.TotalDays = NoOfNights;
+        HotelBooking.OrderDetails.UserId = user.Id;
         HotelBooking.OrderDetails.HotelRoomDTO.TotalAmount = NoOfNights * HotelBooking.OrderDetails.HotelRoomDTO.RegularRate;
     }
 

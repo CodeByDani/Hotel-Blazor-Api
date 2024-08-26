@@ -156,7 +156,7 @@
                                     else
                                     {
 
-                                        <button onclick="@SetDetailsURl(room.Id)" class="btn btn-success btn-block">رزرو</button>
+                                        <button @onclick="() => SetDetailsURl(room.Id)" class="btn btn-success btn-block">رزرو</button>
                                     }
                                 </div>
                             </div>
@@ -191,6 +191,19 @@ else
 }
 
 @code {
+
+    public Task SetDetailsURl(int id)
+    {
+        var queryParams = new Dictionary<string, object>
+        {
+            { "endDate", HomeModel.EndDate.ToString("yyyy-MM-dd") },
+            { "startDate", HomeModel.StartDate.ToString("yyyy-MM-dd") },
+            { "noOfNights", HomeModel.NoOfNights.ToString() },
+        };
+        var queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+        NavigationManager.NavigateTo($"landing/hotel/room-details/{id}?{queryString}");
+        return Task.CompletedTask;
+    }
 
     private void SetAccommodationType(string type)
     {

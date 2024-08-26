@@ -1,12 +1,22 @@
 ﻿@inherits LayoutComponentBase
-
 <nav class="navbar navbar-expand-lg text-white" style="z-index: 999; background-color: transparent; position: absolute; top: 0; width: 100%;">
     
+    
     <div class="container-fluid">
-        <div class="d-flex order-lg-1">
-            <button style="width: 5rem" class="btn rounded-pill m-1 btn-outline-light">ورود</button>
-            <button style="width: 5rem" class="btn rounded-pill m-1 btn-outline-light">ثبت نام</button>
-        </div>
+<AuthorizeView>
+        <Authorized>
+            <span class="p-2 m-2">
+                @context.User.Identity.Name
+            </span>
+            <a class="text-white" href="Identity/Account/Logout">خروج</a>
+        </Authorized>
+<NotAuthorized>
+    <div class="d-flex order-lg-1">
+        <button style="width: 5rem" class="btn rounded-pill m-1 btn-outline-light">ورود</button>
+        <button style="width: 5rem" class="btn rounded-pill m-1 btn-outline-light">ثبت نام</button>
+    </div>
+</NotAuthorized>
+        </AuthorizeView>
 
         <div class="collapse navbar-collapse justify-content-around order-lg-2" id="navbarNav">
             <ul class="navbar-nav">
@@ -25,9 +35,8 @@
             </ul>
         </div>
 
-        <a class="navbar-brand order-lg-3 font-weight-bold" style="font-size: 2rem">هوملند</a> 
+        <a class="navbar-brand order-lg-3 font-weight-bold" style="font-size: 2rem">هوملند</a>
 
     </div>
 </nav>
-
 @Body
