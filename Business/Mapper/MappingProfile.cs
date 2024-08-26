@@ -8,7 +8,15 @@ namespace Business.Mapper
     {
         public MappingProfile()
         {
-            CreateMap<HotelRoomDTO, HotelRoom>();
+            CreateMap<HotelRoom, HotelRoomDTO>()
+                .ForMember(dest => dest.CityName, opt => opt.MapFrom(src => src.CityHotel.Title))  // Assuming CityHotel has a Name property
+                .ForMember(dest => dest.PlaceType, opt => opt.MapFrom(src => src.PlaceType.ToString()))  // Assuming PlaceType has a Name property
+                .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.HotelRoomImages))  // Assuming HotelRoomImages has URLs
+                .ForMember(dest => dest.TotalDays, opt => opt.Ignore())  // Assuming it's calculated elsewhere
+                .ForMember(dest => dest.TotalAmount, opt => opt.Ignore())  // Assuming it's calculated elsewhere
+                .ForMember(dest => dest.Ideas, opt => opt.Ignore())  // Custom logic required
+                .ForMember(dest => dest.IsBooked, opt => opt.Ignore());  // Custom logic required
+
             CreateMap<HotelRoom, HotelRoomDTO>();
             CreateMap<HotelRoomDTO, HotelRoom>();
             CreateMap<CityDto, City>();

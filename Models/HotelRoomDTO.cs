@@ -25,6 +25,8 @@ namespace Models
         public string UserId { get; set; }
 
         public virtual ICollection<HotelRoomImageDTO> HotelRoomImages { get; set; }
+        public List<HotelAmenityDTO> HotelAmenities { get; set; }
+
 
         public List<string> ImageUrls { get; set; }
         public bool IsBooked { get; set; }

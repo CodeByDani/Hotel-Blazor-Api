@@ -1,0 +1,297 @@
+﻿@page "/landing/hotel/room-details/{Id:int}"
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components
+@using Models
+@using Common
+@inject NavigationManager  NavigationManager
+@using Business.Repository.IRepository
+@using HiddenVilla_Server.Model
+@inject IJSRuntime jsRuntime
+@inject IHotelRoomRepository hotelRoomService
+@inject IRoomOrderDetailsRepository roomOrderDetailsService
+@layout LandingLayout
+
+@if (HotelBooking?.OrderDetails?.HotelRoomDTO?.HotelRoomImages == null)
+{
+    <div class="spinner"></div>
+}
+else
+{
+    <div class="text-right mt-4 mx-4 px-0 px-md-5 mx-md-5" dir="rtl">
+
+        <div class="row p-2 my-3 " style="border-radius:20px; ">
+            <div class="col-12 col-lg-7 p-4" style="border: 1px solid #fff">
+                <div class="row px-2 text-success border-bottom">
+                    <div class="col-8 py-1"><p style="font-size:x-large;margin:0px;">اتاق انتخاب شده</p></div>
+                    <div class="col-4 p-0"><a href="hotel/rooms" class="btn btn-secondary btn-block">بازگشت به اتاق‌ها</a></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div id="" class="carousel slide mb-4 m-md-3 m-0 pt-3 pt-md-0" data-ride="carousel">
+                            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                                <ol class="carousel-indicators">
+                                    @{
+                                        int imageIndex = 0;
+                                        int innerImageIndex = 0;
+                                    }
+                                    @foreach (var image in HotelBooking.OrderDetails.HotelRoomDTO.HotelRoomImages)
+                                    {
+                                        if (imageIndex == 0)
+                                        {
+                                            <li data-target="#carouselExampleIndicators" data-slide-to="@imageIndex" class="active"></li>
+
+                                        }
+                                        else
+                                        {
+                                            <li data-target="#carouselExampleIndicators" data-slide-to="@imageIndex"></li>
+                                        }
+                                        imageIndex++;
+                                    }
+                                </ol>
+                                <div class="carousel-inner">
+                                    @foreach (var image in HotelBooking.OrderDetails.HotelRoomDTO.HotelRoomImages)
+                                    {
+                                        if (innerImageIndex == 0)
+                                        {
+                                            <div class="carousel-item active">
+                                                <img class="d-block w-100" style="border-radius:20px;" src="@image.RoomImageUrl" alt="First slide">
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="carousel-item">
+                                                <img class="d-block w-100" style="border-radius:20px;" src="@image.RoomImageUrl" alt="First slide">
+                                            </div>
+                                        }
+
+                                        innerImageIndex++;
+                                    }
+                                </div>
+                                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">قبلی</span>
+                                </a>
+                                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">بعدی</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <span class="float-left pt-4">
+                            <span class="float-left">حداکثر ظرفیت : @HotelBooking.OrderDetails.HotelRoomDTO.Occupancy بزرگسالان </span><br />
+                            <span class="float-left pt-1">اندازه ویلا : @HotelBooking.OrderDetails.HotelRoomDTO.SqFt فوت مربع</span><br />
+                            <h4 class="text-warning font-weight-bold pt-5">
+                                دلار
+                                <span style="border-bottom:1px solid #ff6a00">
+                                    @HotelBooking.OrderDetails.HotelRoomDTO.TotalAmount.ToString("#,#.00#;(#,#.00#)")
+                                </span>
+                            </h4>
+                            <span class="float-left">هزینه برای @HotelBooking.OrderDetails.HotelRoomDTO.TotalDays شب</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="row p-2">
+                    <div class="col-12">
+                        <p class="card-title text-warning" style="font-size:xx-large">@HotelBooking.OrderDetails.HotelRoomDTO.Name</p>
+                        <p class="card-text" style="font-size:large">
+                            @((MarkupString)@HotelBooking.OrderDetails.HotelRoomDTO.Details)
+                        </p>
+                    </div>
+                    <div>
+                        <h3 class="text-right mb-4"> امکانات هتل</h3>
+
+                        <div class="row">
+                            @if (HotelBooking.OrderDetails.HotelRoomDTO.HotelAmenities != null)
+                            {
+                                @foreach (var amenity in HotelBooking.OrderDetails.HotelRoomDTO.HotelAmenities)
+                                {
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check">
+                                            <label class="form-check-label p-2">
+                                                <i class="@amenity.IconStyle"></i> @amenity.Name
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p>در حال بارگذاری...</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-5 p-4 2 mt-4 mt-md-0" style="border: 1px solid #fff;">
+                <EditForm Model="HotelBooking" class="container" OnValidSubmit="HandleCheckout">
+
+                    <div class="row px-2 text-success border-bottom"><div class="col-7 py-1"><p style="font-size:x-large;margin:0px;">ورود جزئیات</p></div></div>
+
+                    <div class="form-group pt-2">
+                        <label class="text-warning">نام</label>
+                        <InputText @bind-Value="HotelBooking.OrderDetails.Name" type="text" class="form-control" />
+                    </div>
+                    <div class="form-group pt-2">
+                        <label class="text-warning">تلفن</label>
+                        <InputText @bind-Value="HotelBooking.OrderDetails.Phone" type="text" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="text-warning">ایمیل</label>
+                        <InputText @bind-Value="HotelBooking.OrderDetails.Email" type="text" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="text-warning">تاریخ ورود</label>
+                        <InputDate @bind-Value="HotelBooking.OrderDetails.CheckInDate" type="date" disabled class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="text-warning">تاریخ خروج</label>
+                        <InputDate @bind-Value="HotelBooking.OrderDetails.CheckOutDate" type="date" disabled class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="text-warning">تعداد شب‌ها</label>
+                        <select class="form-control" value="@NoOfNights" @onchange="HandleNoOfNightsChange">
+                            @for (var i = 1; i <= 10; i++)
+                            {
+                                if (i == NoOfNights)
+                                {
+                                    <option value="@i" selected="selected">@i</option>
+                                }
+                                else
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+
+                        @if (HotelBooking.OrderDetails.HotelRoomDTO.IsBooked)
+                        {
+                            <input class="btn btn-secondary form-control" value="ناموجود" />
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-success form-control">اکنون پرداخت کنید</button>
+                        }
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    public HotelRoomBookingVM HotelBooking { get; set; } = new HotelRoomBookingVM();
+    private int NoOfNights { get; set; } = 1;
+    private DateTime StartDate { get; set; }
+    private DateTime EndDate { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+        if (queryParams.TryGetValue("startDate", out var startDateStr))
+        {
+            StartDate = DateTime.Parse(startDateStr);
+        }
+
+        if (queryParams.TryGetValue("endDate", out var endDateStr))
+        {
+            EndDate = DateTime.Parse(endDateStr);
+        }
+
+        if (queryParams.TryGetValue("noOfNights", out var noOfNightsStr))
+        {
+            NoOfNights = int.Parse(noOfNightsStr);
+        }
+
+        try
+        {
+            HotelBooking.OrderDetails = new RoomOrderDetailsDTO();
+            if (Id != null)
+            {
+                HotelBooking.OrderDetails.HotelRoomDTO = await hotelRoomService.NewGetHotelRoom(Id.Value,
+                    DateTime.Now.ToString("MM/dd/yyyy"), DateTime.Now.AddDays(1).ToString("MM/dd/yyyy"));
+                HotelBooking.OrderDetails.CheckInDate = StartDate;
+                HotelBooking.OrderDetails.CheckOutDate = EndDate;
+                HotelBooking.OrderDetails.HotelRoomDTO.TotalDays = NoOfNights;
+                HotelBooking.OrderDetails.HotelRoomDTO.TotalAmount =
+                    NoOfNights * HotelBooking.OrderDetails.HotelRoomDTO.RegularRate;
+            }
+        }
+        catch (Exception e)
+        {
+            await jsRuntime.ToastrError(e.Message);
+        }
+    }
+
+
+    private async Task HandleNoOfNightsChange(ChangeEventArgs e)
+    {
+        NoOfNights = Convert.ToInt32(e.Value.ToString());
+        HotelBooking.OrderDetails.HotelRoomDTO = await hotelRoomService.GetHotelRoom(Id.Value,
+        HotelBooking.OrderDetails.CheckInDate.ToString("MM/dd/yyyy"),
+        HotelBooking.OrderDetails.CheckInDate.AddDays(NoOfNights).ToString("MM/dd/yyyy"));
+
+        HotelBooking.OrderDetails.CheckOutDate = HotelBooking.OrderDetails.CheckInDate.AddDays(NoOfNights);
+        HotelBooking.OrderDetails.HotelRoomDTO.TotalDays = NoOfNights;
+        HotelBooking.OrderDetails.HotelRoomDTO.TotalAmount = NoOfNights * HotelBooking.OrderDetails.HotelRoomDTO.RegularRate;
+    }
+
+    private async Task HandleCheckout()
+    {
+        if (!await HandleValidation())
+        {
+            return;
+        }
+
+        try
+        {
+            HotelBooking.OrderDetails.RoomId = HotelBooking.OrderDetails.HotelRoomDTO.Id;
+            HotelBooking.OrderDetails.TotalCost = HotelBooking.OrderDetails.HotelRoomDTO.TotalAmount;
+
+            var roomOrderDetailsSaved = await roomOrderDetailsService.Create(HotelBooking.OrderDetails);
+
+            await jsRuntime.ToastrSuccess("پرداخت موفقیت امیز بود");
+        }
+        catch (Exception e)
+        {
+            await jsRuntime.ToastrError(e.Message);
+        }
+
+    }
+
+    private async Task<bool>
+        HandleValidation()
+    {
+        if (string.IsNullOrEmpty(HotelBooking.OrderDetails.Name))
+        {
+            await jsRuntime.ToastrError("نام نمی‌تواند خالی باشد");
+            return false;
+        }
+        if (string.IsNullOrEmpty(HotelBooking.OrderDetails.Phone))
+        {
+            await jsRuntime.ToastrError("تلفن نمی‌تواند خالی باشد");
+            return false;
+        }
+
+        if (string.IsNullOrEmpty(HotelBooking.OrderDetails.Email))
+        {
+            await jsRuntime.ToastrError("ایمیل نمی‌تواند خالی باشد");
+            return false;
+        }
+        return true;
+
+    }
+}

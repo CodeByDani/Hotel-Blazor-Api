@@ -1,0 +1,200 @@
+﻿@page "/landing/hotel/rooms"
+@using Microsoft.AspNetCore.Components
+@using Models
+@using Common
+@using Business.Repository.IRepository
+@using HiddenVilla_Server.Model
+@using System.ComponentModel.DataAnnotations
+@using DataAcesss.Data
+@using HiddenVilla_Server.Service.IService
+@inject IJSRuntime jsRuntime
+@inject ICityService CityService
+@inject IHotelRoomRepository HotelRoomRepository
+@inject NavigationManager NavigationManager
+@layout LandingLayout
+
+@if (Rooms != null && Rooms.Any())
+{
+    <div style="height:10vh ;background: rgba(0, 0, 0, 0.5); /* Black with 70% opacity */ color: white; /* White text color to contrast the black background */">
+    </div>
+        <EditForm Model="HomeModel" OnValidSubmit="SaveBookingInfo">
+            <div class="row text-right justify-content-around align-content-center">
+                <!-- Added row for Bootstrap grid -->
+                <!-- Number of Guests -->
+                <div class="col-12 col-md-2">
+                    <div class="form-group">
+                        <label for="guests">تعداد</label>
+                        <input type="number" min="1" max="10" id="guests" @bind="HomeModel.NoOfGuests" class="form-control" placeholder="تعداد"/>
+                    </div>
+                </div>
+
+                <!-- Start Date -->
+                <div class="col-12 col-md-3">
+                    <div class="form-group">
+                        <label for="startDate">تاریخ شروع رزرو</label>
+                        <InputDate id="startDate" min="@DateTime.Now.ToString("yyyy-MM-dd")" type="text" @bind-Value="HomeModel.StartDate" class="form-control"/>
+                    </div>
+                </div>
+
+                <!-- End Date -->
+                <div class="col-12 col-md-3">
+                    <div class="form-group">
+                        <label for="endDate">تاریخ پایان رزرو</label>
+                        <InputDate id="endDate" min="@DateTime.Now.ToString("yyyy-MM-dd")" @bind-Value="HomeModel.EndDate" type="text" class="form-control"/>
+                    </div>
+                </div>
+
+                <div class="form-group text-right col-12 col-md-3">
+                    <label>موقعیت</label>
+                    <select class="form-control" @bind="SelectedCity">
+                        <option value=""></option>
+                        @if (cities != null)
+                        {
+                            @foreach (var city in cities)
+                            {
+                                <option value="@city.Id">@city.Title</option>
+                            }
+                        }
+                        else
+                        {
+                            <option>در حال بارگذاری...</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Accommodation Types -->
+                <div class="col-12 col-md-4">
+                    <div class="form-group">
+                        <div class="d-flex flex-wrap justify-content-around">
+                            <button type="button" @onclick="() => SetAccommodationType(nameof(PlaceType.Hotel))" class="btn btn-outline-dark">هتل</button>
+                            <button type="button" @onclick="() => SetAccommodationType(nameof(PlaceType.Villa))" class="btn btn-outline-dark">ویلا</button>
+                            <button type="button" @onclick="() => SetAccommodationType(nameof(PlaceType.Apartment))" class="btn btn-outline-dark">آپارتمان</button>
+                            <button type="button" @onclick="() => SetAccommodationType(nameof(PlaceType.Garden))" class="btn btn-outline-dark">باغ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="col-12 d-flex justify-content-center mt-3">
+                    <input type="submit" value="جستجو" class="btn btn-success w-50"/>
+                </div>
+            </div>
+        </EditForm>
+    <div class="mt-4 mx-4 px-0 px-md-5 mx-md-5">
+
+        @foreach (var room in Rooms)
+        {
+
+            <div class="row p-2 my-3 " style="border-radius:20px; border: 1px solid black">
+                <div class="col-12 col-lg-3 col-md-4">
+                    <div id="carouselExampleIndicators_@room.Id" class="carousel slide mb-4 m-md-3 m-0 pt-3 pt-md-0" data-ride="carousel">
+                        <ol class="carousel-indicators">
+                            @{
+                                int imageIndex = 0;
+                                int innerImageIndex = 0;
+                            }
+                            @foreach (var image in room.HotelRoomImages)
+                            {
+                                if (imageIndex == 0)
+                                {
+                                    <li data-target="#carouselExampleIndicators_@room.Id" data-slide-to="@imageIndex" class="active"></li>
+
+                                }
+                                else
+                                {
+                                    <li data-target="#carouselExampleIndicators_@room.Id" data-slide-to="@imageIndex"></li>
+                                }
+                                imageIndex++;
+                            }
+
+
+                        </ol>
+                        <div class="carousel-inner">
+                            @foreach (var image in room.HotelRoomImages)
+                            {
+                                if (innerImageIndex == 0)
+                                {
+                                    <div class="carousel-item active">
+                                        <img class="d-block w-100" style="border-radius:20px;" src="@image.RoomImageUrl" alt="اسلاید اول">
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="carousel-item">
+                                        <img class="d-block w-100" style="border-radius:20px;" src="@image.RoomImageUrl" alt="اسلاید اول">
+                                    </div>
+                                }
+
+                                innerImageIndex++;
+                            }
+                        </div>
+                        <a class="carousel-control-prev" href="#carouselExampleIndicators_@room.Id" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">قبلی</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselExampleIndicators_@room.Id" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">بعدی</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-9 col-md-8">
+                    <div class="row pt-3">
+                        <div class="col-12 col-lg-8">
+                            <p class="card-title text-warning text-right" style="font-size:xx-large">@room.Name</p>
+                            <p class="card-text text-right">
+                                @((MarkupString)room.Details)
+                            </p>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="row pb-3 pt-2">
+                                <div class="col-12 col-lg-11 offset-lg-1">
+                                    @if (room.IsBooked)
+                                    {
+                                        <button disabled class="btn btn-secondary btn-block">فروخته شد</button>
+                                    }
+                                    else
+                                    {
+
+                                        <button onclick="@SetDetailsURl(room.Id)" class="btn btn-success btn-block">رزرو</button>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col-12 pb-5">
+                                    <span class="float-left">
+                                        <span class="float-left">حداکثر ظرفیت: @room.Occupancy نفر </span><br />
+                                        <span class="float-left pt-1">اندازه : @room.SqFt متر مربع</span><br />
+                                        <h4 class="text-warning font-weight-bold pt-4">
+                                            دلار آمریکا
+                                            <span style="border-bottom:1px solid #ff6a00">
+                                                @room.TotalAmount.ToString("#,#.00;(#,#.00#)")
+                                            </span>
+                                        </h4>
+                                        <span class="float-left">هزینه برای @room.TotalDays شب</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+}
+else
+{
+    <div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
+    </div>
+}
+
+@code {
+
+    private void SetAccommodationType(string type)
+    {
+        HomeModel.AccommodationType = type;
+    }
+
+}

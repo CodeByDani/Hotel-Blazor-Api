@@ -81,6 +81,34 @@ namespace Business.Repository
             }
         }
 
+        public async Task<IEnumerable<HotelRoomDTO>> GetAllHotelRoomsMain(string type, int cityId, string checkInDateStr = null, string checkOutDatestr = null)
+        {
+            try
+            {
+                IEnumerable<HotelRoomDTO> hotelRoomDTOs =
+                    _mapper.Map<IEnumerable<HotelRoom>, IEnumerable<HotelRoomDTO>>
+                    (_db.HotelRooms.Include(x => x.HotelRoomImages)
+                        .Include(x => x.CityHotel)
+                        .Where(x =>
+                            (x.CityHotelId == cityId || cityId == 0) &&
+                           (string.IsNullOrEmpty(type) || x.PlaceType == SetPlaceType(type))
+                    ));
+
+                if (!string.IsNullOrEmpty(checkInDateStr) && !string.IsNullOrEmpty(checkOutDatestr))
+                {
+                    foreach (HotelRoomDTO hotelRoom in hotelRoomDTOs)
+                    {
+                        hotelRoom.IsBooked = await IsRoomBooked(hotelRoom.Id, checkInDateStr, checkOutDatestr);
+                    }
+                }
+                return hotelRoomDTOs;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
         public async Task<HotelRoomDTO> GetHotelRoom(int roomId, string checkInDateStr, string checkOutDatestr)
         {
             try
@@ -94,6 +122,36 @@ namespace Business.Repository
                 }
 
                 return hotelRoom;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+
+        public async Task<HotelRoomDTO> NewGetHotelRoom(int roomId, string checkInDateStr, string checkOutDatestr)
+        {
+            try
+            {
+                var hotelRoom =
+                    await _db.HotelRooms.Include(x => x.HotelRoomImages)
+                        .Include(p => p.User)
+                        .Include(p => p.HotelRoomHotelAmenity)
+                        .ThenInclude(x => x.HotelAmenity)
+                        .FirstOrDefaultAsync(x => x.Id == roomId);
+                var res = _mapper.Map<HotelRoomDTO>(hotelRoom);
+                var r = _db.HotelRoomHotelAmenities
+                    .Where(p => p.HotelRoomId == hotelRoom.Id)
+                    .Select(p => p.HotelAmenity)  // Assuming HotelAmenity is a navigation property
+                    .ToList();
+                res.HotelAmenities = _mapper.Map<List<HotelAmenityDTO>>(r);
+                if (!string.IsNullOrEmpty(checkInDateStr) && !string.IsNullOrEmpty(checkOutDatestr))
+                {
+                    res.IsBooked = await IsRoomBooked(roomId, checkInDateStr, checkOutDatestr);
+                }
+
+                return res;
             }
             catch (Exception ex)
             {

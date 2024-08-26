@@ -1,0 +1,33 @@
+﻿@inherits LayoutComponentBase
+
+<nav class="navbar navbar-expand-lg text-white" style="z-index: 999; background-color: transparent; position: absolute; top: 0; width: 100%;">
+    
+    <div class="container-fluid">
+        <div class="d-flex order-lg-1">
+            <button style="width: 5rem" class="btn rounded-pill m-1 btn-outline-light">ورود</button>
+            <button style="width: 5rem" class="btn rounded-pill m-1 btn-outline-light">ثبت نام</button>
+        </div>
+
+        <div class="collapse navbar-collapse justify-content-around order-lg-2" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <NavLink href="/" class="text-white nav-link m-1" Match="NavLinkMatch.All">صفحه اصلی</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink href="/comments" class="text-white nav-link m-1">نظرات</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink href="/contact" class="text-white nav-link m-1">تماس با ما</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink href="/about" class="text-white nav-link m-1">درباره ما</NavLink>
+                </li>
+            </ul>
+        </div>
+
+        <a class="navbar-brand order-lg-3 font-weight-bold" style="font-size: 2rem">هوملند</a> 
+
+    </div>
+</nav>
+
+@Body

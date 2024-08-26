@@ -1,0 +1,130 @@
+﻿@page "/landing/hotel"
+@using HiddenVilla_Server.Model
+@using Microsoft.AspNetCore.Components
+@using DataAcesss.Data
+@using HiddenVilla_Server.Service
+@using HiddenVilla_Server.Service.IService
+@using Models
+@using System.ComponentModel.DataAnnotations
+@using Common
+@inject ICityService CityService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager navigationManager
+@layout LandingLayout
+
+<div class="position-relative" style="height: 90vh; background-image: url('/RoomImages/background.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+    <div style="position: absolute; bottom: -5rem; left: 50%; transform: translateX(-50%); background-color: rgba(255, 255, 255, 0.8); border-radius: 10px; padding: 20px; width: 90%; max-width: 1200px;">
+
+        <EditForm Model="HomeModel" OnValidSubmit="SaveInitialData">
+            <div class="row justify-content-around align-content-center">
+                <!-- Added row for Bootstrap grid -->
+                <!-- Number of Guests -->
+                <div class="col-12 col-md-2">
+                    <div class="form-group">
+                        <label for="guests">تعداد</label>
+                        <input type="number" min="1" max="10" id="guests" @bind="HomeModel.NoOfGuests" class="form-control" placeholder="تعداد" />
+                    </div>
+                </div>
+
+                <!-- Start Date -->
+                <div class="col-12 col-md-3">
+                    <div class="form-group">
+                        <label for="startDate">تاریخ شروع رزرو</label>
+                        <InputDate id="startDate" min="@DateTime.Now.ToString("yyyy-MM-dd")" type="text" @bind-Value="HomeModel.StartDate" class="form-control" />
+                    </div>
+                </div>
+
+                <!-- End Date -->
+                <div class="col-12 col-md-3">
+                    <div class="form-group">
+                        <label for="endDate">تاریخ پایان رزرو</label>
+                        <InputDate id="endDate" min="@DateTime.Now.ToString("yyyy-MM-dd")" @bind-Value="HomeModel.EndDate" type="text" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-group text-right col-12 col-md-3">
+                    <label>موقعیت</label>
+                    <select class="form-control" @bind="SelectedCity">
+                        <option value=""></option>
+                        @if (cities != null)
+                        {
+                            @foreach (var city in cities)
+                            {
+                                <option value="@city.Id">@city.Title</option>
+                            }
+                        }
+                        else
+                        {
+                            <option>در حال بارگذاری...</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Accommodation Types -->
+                <div class="col-12 col-md-4">
+                    <div class="form-group">
+                        <div class="d-flex flex-wrap justify-content-around">
+                            <button type="button" @onclick="() => SetAccommodationType(nameof(PlaceType.Hotel))" class="btn btn-outline-dark">هتل</button>
+                            <button type="button" @onclick="() => SetAccommodationType(nameof(PlaceType.Villa))" class="btn btn-outline-dark">ویلا</button>
+                            <button type="button" @onclick="() => SetAccommodationType(nameof(PlaceType.Apartment))" class="btn btn-outline-dark">آپارتمان</button>
+                            <button type="button" @onclick="() => SetAccommodationType(nameof(PlaceType.Garden))" class="btn btn-outline-dark">باغ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="col-12 d-flex justify-content-center mt-3">
+                    <input type="submit" value="جستجو" class="btn btn-success w-50" />
+                </div>
+
+
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private HomeModel HomeModel = new HomeModel();
+    [Required(ErrorMessage = "حتما وارد شود")]
+    public int SelectedCity { get; set; }
+
+    private IEnumerable<CityDto> cities;
+
+    protected override async Task OnInitializedAsync()
+    {
+        cities = await CityService.GetCities();
+        
+    }
+
+    private async Task SaveInitialData()
+    {
+        try
+        {
+            HomeModel.EndDate = HomeModel.StartDate.AddDays(HomeModel.NoOfNights);
+            HomeModel.Location = SelectedCity;
+            var queryParams = new Dictionary<string, object>
+            {
+                { "endDate", HomeModel.EndDate.ToString("yyyy-MM-dd") },
+                { "startDate", HomeModel.StartDate.ToString("yyyy-MM-dd") },
+                { "noOfNights", HomeModel.NoOfNights.ToString() },
+                { "location", HomeModel.Location },
+                { "type", HomeModel.AccommodationType }
+            };
+            if (HomeModel.AccommodationType is null) queryParams.Remove("type");
+            var queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+            navigationManager.NavigateTo($"landing/hotel/rooms?{queryString}");
+        }
+        catch (Exception e)
+        {
+            await jsRuntime.ToastrError(e.Message);
+        }
+    }
+
+    private void SetAccommodationType(string type)
+    {
+        HomeModel.AccommodationType = type;
+    }
+}
+
+
+
