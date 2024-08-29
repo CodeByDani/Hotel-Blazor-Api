@@ -6,8 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Business.Repository
@@ -64,6 +62,7 @@ namespace Business.Repository
                     .FirstOrDefaultAsync(u => u.Id == roomOrderId);
 
                 RoomOrderDetailsDTO roomOrderDetailsDTO = _mapper.Map<RoomOrderDetails, RoomOrderDetailsDTO>(roomOrder);
+                //roomOrderDetailsDTO = roomOrder.HotelRoom;
                 roomOrderDetailsDTO.HotelRoomDTO.TotalDays = roomOrderDetailsDTO.CheckOutDate
                     .Subtract(roomOrderDetailsDTO.CheckInDate).Days;
 

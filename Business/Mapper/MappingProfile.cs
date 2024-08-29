@@ -27,6 +27,12 @@ namespace Business.Mapper
 
             CreateMap<RoomOrderDetailsDTO, RoomOrderDetails>();
 
+            CreateMap<RoomOrderDetails, RoomOrderDetailsDTO>().ForMember(dest => dest.HotelName,
+                opt => opt.MapFrom(src => src.HotelRoom.Name))
+                .ForMember(dest => dest.HotelRoomDTO,
+                opt => opt.MapFrom(src => src.HotelRoom));
+
+
         }
     }
 }
