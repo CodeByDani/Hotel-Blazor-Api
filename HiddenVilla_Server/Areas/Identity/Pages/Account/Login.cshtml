@@ -5,48 +5,47 @@
     ViewData["Title"] = "ورود";
 }
 
-<h1 class="text-center mt-5">@ViewData["Title"]</h1>
-
-<div class="container">
-    <div class="row justify-content-center" style="direction: rtl; text-align: right;">
-        <div class="col-md-6">
-            <div class="card shadow-lg">
-                <div class="card-body">
+<div class="min-vh-100 d-flex justify-content-center align-items-center text-right" style="direction: rtl;">
+    <div class="row justify-content-center w-100">
+        <div class="col-lg-5 col-md-7 col-sm-9">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header bg-gradient-primary text-white text-center py-4">
+                    <h2 class="card-title m-0">@ViewData["Title"]</h2>
+                </div>
+                <div class="card-body p-5">
                     <section>
-                        <h4 class="card-title text-center mb-4">استفاده از حساب محلی برای ورود</h4>
-                        <hr />
+                        <h5 class="text-center mb-4">ورود به حساب کاربری</h5>
                         <form id="account" method="post">
                             <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
 
-                            <div class="form-group mb-3">
-                                <label asp-for="Input.Email" class="form-label"></label>
-                                <input asp-for="Input.Email" class="form-control" placeholder="ایمیل خود را وارد کنید" />
+                            <div class="form-floating mb-4">
+                                <label asp-for="Input.Email">ایمیل</label>
+                                <input asp-for="Input.Email" class="form-control" placeholder="ایمیل" />
                                 <span asp-validation-for="Input.Email" class="text-danger"></span>
                             </div>
 
-                            <div class="form-group mb-3">
-                                <label asp-for="Input.Password" class="form-label"></label>
-                                <input asp-for="Input.Password" class="form-control" placeholder="رمز عبور خود را وارد کنید" />
+                            <div class="form-floating mb-4">
+                                <label asp-for="Input.Password">رمز عبور</label>
+                                <input asp-for="Input.Password" class="form-control" placeholder="رمز عبور" type="password" />
                                 <span asp-validation-for="Input.Password" class="text-danger"></span>
                             </div>
 
-                            <div class="form-check mb-3">
-                                <input asp-for="Input.RememberMe" class="form-check-input" />
-                                <label asp-for="Input.RememberMe" class="form-check-label">
-                                    @Html.DisplayNameFor(m => m.Input.RememberMe)
+                            <div class="form-check mb-4">
+                                <input asp-for="Input.RememberMe" class="form-check-input ml-5" />
+                                <label asp-for="Input.RememberMe" class="form-check-label mr-5">
+                                    مرا به خاطر بسپار
                                 </label>
                             </div>
 
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-block">ورود</button>
+                            <div class="d-grid mb-4">
+                                <button type="submit" class="btn btn-primary btn-block py-2">ورود</button>
                             </div>
 
-                            <div class="text-center mt-4">
-                                <p>
-                                    <a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none">رمز عبور خود را فراموش کرده‌اید؟</a>
-                                </p>
-                                <p>
-                                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none">ثبت نام به عنوان کاربر جدید</a>
+                            <div class="text-center">
+                                <a id="forgot-password" asp-page="./ForgotPassword" class="small text-muted">رمز عبور خود را فراموش کرده‌اید؟</a>
+                                <p class="mt-3">
+                                    کاربر جدید؟
+                                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-primary">ثبت نام</a>
                                 </p>
                             </div>
                         </form>
@@ -55,20 +54,21 @@
             </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-lg-5 col-md-7 col-sm-9 mt-4 mt-md-0">
             <section>
                 @{
                     if ((Model.ExternalLogins?.Count ?? 0) > 0)
                     {
-                        <div class="card shadow-lg mt-4 mt-md-0">
-                            <div class="card-body">
-                                <h5 class="card-title text-center">ورود با استفاده از حساب خارجی</h5>
-                                <hr />
+                        <div class="card shadow-lg border-0 rounded-lg">
+                            <div class="card-header bg-gradient-secondary text-white text-center py-4">
+                                <h5 class="card-title m-0">ورود با حساب‌های دیگر</h5>
+                            </div>
+                            <div class="card-body p-4">
                                 <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
                                     <div class="d-grid gap-2">
                                         @foreach (var provider in Model.ExternalLogins)
                                         {
-                                            <button type="submit" class="btn btn-outline-primary" name="provider" value="@provider.Name" title="ورود با استفاده از حساب @provider.DisplayName">
+                                            <button type="submit" class="btn btn-outline-primary py-2" name="provider" value="@provider.Name" title="ورود با استفاده از @provider.DisplayName">
                                                 @provider.DisplayName
                                             </button>
                                         }
@@ -86,3 +86,47 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<style>
+    body {
+        background-color: #f0f4f8;
+    }
+
+    .bg-gradient-primary {
+        background: linear-gradient(90deg, #007bff, #6610f2);
+    }
+
+    .bg-gradient-secondary {
+        background: linear-gradient(90deg, #6c757d, #adb5bd);
+    }
+
+    .form-floating > label {
+        padding: 0.75rem 1rem;
+    }
+
+    .form-control {
+        height: calc(3.5rem + 2px);
+        padding: 1rem;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+    .text-primary {
+        color: #007bff;
+    }
+
+        .text-primary:hover {
+            color: #0056b3;
+        }
+
+    .min-vh-100 {
+        min-height: 100vh;
+    }
+</style>

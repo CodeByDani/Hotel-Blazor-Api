@@ -1,0 +1,18 @@
+.card {
+    border-radius: 10px;
+}
+
+.card-title {
+    font-size: 2rem;
+    color: #007bff;
+}
+
+.card-text {
+    margin-top: 10px;
+    line-height: 1.6;
+}
+
+.card-img {
+    height: 100%;
+    object-fit: cover;
+}

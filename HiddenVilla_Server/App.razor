@@ -4,14 +4,48 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    <p>عدم دسترسی</p>
+                    <div class="container text-center my-5">
+                        <div class="row justify-content-center">
+                            <div class="col-md-8">
+                                <!-- 404 Title -->
+                                <h1 class="display-1 text-warning font-weight-bold">401</h1>
+                                <h2 class="text-dark">اوه! عدم دسترسی به صفحه.</h2>
+                                <p class="text-muted mb-4">برای دسترسی به صفحه ابتدا باید ثبت نام کنید</p>
+
+                                <!-- Image (optional) -->
+                                <img src="https://via.placeholder.com/400x300.png?text=401+Error" alt="404 Image" class="img-fluid mb-4 rounded-lg shadow-sm">
+
+                                <!-- Navigation Links -->
+                                <div class="mt-3">
+                                    <a href="/" class="btn btn-primary btn-lg px-4">بازگشت به صفحه اصلی</a>
+                                    <a href="/landing/contact" class="btn btn-outline-secondary btn-lg px-4 ml-2">تماس با پشتیبانی</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </NotAuthorized>
             </AuthorizeRouteView>
         </Found>
         <NotFound>
-            <LayoutView Layout="@typeof(MainLayout)">
-                <p>404</p>
-            </LayoutView>
+                <div class="container text-center my-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <!-- 404 Title -->
+                            <h1 class="display-1 text-danger font-weight-bold">404</h1>
+                            <h2 class="text-dark">اوه! صفحه‌ای که به دنبال آن هستید یافت نشد.</h2>
+                            <p class="text-muted mb-4">ممکن است صفحه حذف شده باشد یا لینک اشتباهی وارد کرده‌اید.</p>
+
+                            <!-- Image (optional) -->
+                            <img src="https://via.placeholder.com/400x300.png?text=404+Error" alt="404 Image" class="img-fluid mb-4 rounded-lg shadow-sm">
+
+                            <!-- Navigation Links -->
+                            <div class="mt-3">
+                                <a href="/" class="btn btn-primary btn-lg px-4">بازگشت به صفحه اصلی</a>
+                                <a href="/landing/contact" class="btn btn-outline-secondary btn-lg px-4 ml-2">تماس با پشتیبانی</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </NotFound>
     </Router>
 </CascadingAuthenticationState>

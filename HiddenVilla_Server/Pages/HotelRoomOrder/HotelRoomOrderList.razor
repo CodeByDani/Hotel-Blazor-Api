@@ -5,33 +5,54 @@
 @inject IRoomOrderDetailsRepository roomOrderDetailReposiory
 @inject IJSRuntime jsRuntime
 @inject NavigationManager navigationManager
+@attribute [Authorize(Roles = Common.SD.Role_Admin)]
 
 @if (!IsLoading)
 {
-    <h4 class="card-title text-info text-right">سفارش‌های اتاق هتل</h4>
-    <RadzenGrid AllowFiltering="true"
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                FilterMode="FilterMode.Advanced" AllowPaging="true" PageSize="4"
-                AllowSorting="true" Data="@HotelRoomOrders" TItem="RoomOrderDetailsDTO" ColumnWidth="200px">
-        <Columns>
-            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Name" Title="نام مشتری" />
-            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Phone" Title="تلفن مشتری" />
-            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Email" Title="ایمیل مشتری" />
-            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="HotelName" Title="اتاق" />
-            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Status" Title="وضعیت" />
-            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="CheckInDate" Title="تاریخ ورود">
-                <Template Context="data">
-                    @String.Format("{0:d}", data.CheckInDate)
-                </Template>
-            </RadzenGridColumn>
+    <div class="container my-4">
+        <!-- Title -->
+        <h4 class="card-title text-info text-right mb-4">سفارش‌های اتاق هتل</h4>
 
-            <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Id" Title="">
-                <Template Context="data">
-                    <NavLink class="btn btn-primary" href="@($"hotel-room-order/details/{data.Id}")">جزئیات</NavLink>
-                </Template>
-            </RadzenGridColumn>
-        </Columns>
-    </RadzenGrid>
+        <!-- Grid -->
+        <div class="card shadow-sm border-0 rounded-lg">
+            <div class="card-body p-0">
+                <RadzenGrid AllowFiltering="true"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            FilterMode="FilterMode.Advanced"
+                            AllowPaging="true" PageSize="4"
+                            AllowSorting="true" Data="@HotelRoomOrders" TItem="RoomOrderDetailsDTO"
+                            class="table table-hover text-right table-bordered"
+                            ColumnWidth="200px">
+                    <Columns>
+                        <!-- Customer Name -->
+                        <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Name" Title="نام مشتری" />
+                        <!-- Customer Phone -->
+                        <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Phone" Title="تلفن مشتری" />
+                        <!-- Customer Email -->
+                        <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Email" Title="ایمیل مشتری" />
+                        <!-- Room Name -->
+                        <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="HotelName" Title="اتاق" />
+                        <!-- Status -->
+                        <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Status" Title="وضعیت" />
+                        <!-- Check-in Date with formatted date -->
+                        <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="CheckInDate" Title="تاریخ ورود">
+                            <Template Context="data">
+                                @String.Format("{0:yyyy/MM/dd}", data.CheckInDate)
+                            </Template>
+                        </RadzenGridColumn>
+
+                        <!-- Details Button -->
+                        <RadzenGridColumn TItem="RoomOrderDetailsDTO" Property="Id" Title="">
+                            <Template Context="data">
+                                <NavLink class="btn btn-info btn-sm" href="@($"hotel-room-order/details/{data.Id}")">جزئیات</NavLink>
+                            </Template>
+                        </RadzenGridColumn>
+                    </Columns>
+                </RadzenGrid>
+            </div>
+        </div>
+    </div>
+
 }
 else
 {

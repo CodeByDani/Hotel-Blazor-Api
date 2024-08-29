@@ -21,6 +21,7 @@ namespace HiddenVilla_Server.Pages.HotelRoom
         public int? SelectedCity { get; set; }
         private HotelRoomDTO HotelRoomModel { get; set; } = new HotelRoomDTO();
         private string Title { get; set; } = "ایجاد";
+
         private HotelRoomImageDTO RoomImage { get; set; } = new HotelRoomImageDTO();
         private List<string> DeletedImageNames { get; set; } = new List<string>();
         public BlazoredTextEditor QuillHtml { get; set; } = new BlazoredTextEditor();
@@ -140,6 +141,11 @@ namespace HiddenVilla_Server.Pages.HotelRoom
                     HotelRoomModel.UserId = user.Id;
                     HotelRoomModel.Ideas = amenities.Where(x => x.IsSelected).Select(p => p.Id).ToList();
                     //update
+                    if (HotelRoomModel.ImageUrls.Count == 0)
+                    {
+                        await JsRuntime.ToastrError("عکسی انتخاب نشده");
+                        return;
+                    }
                     var updateRoomResult = await HotelRoomRepository.UpdateHotelRoom(HotelRoomModel.Id, HotelRoomModel);
                     if ((HotelRoomModel.ImageUrls != null && HotelRoomModel.ImageUrls.Any()) ||
                         (DeletedImageNames != null && DeletedImageNames.Any()))
@@ -162,13 +168,24 @@ namespace HiddenVilla_Server.Pages.HotelRoom
                 }
                 else
                 {
-                    //create
-                    HotelRoomModel.Details = await QuillHtml.GetHTML();
-                    HotelRoomModel.CityHotelId = SelectedCity.Value;
-                    HotelRoomModel.PlaceType = SelectedType;
-                    HotelRoomModel.UserId = user.Id;
                     HotelRoomModel.Ideas = amenities.Where(x => x.IsSelected).Select(p => p.Id).ToList();
+                    //create
+                    if (!await HandleValidation())
+                    {
+                        return;
+                        //NavigationManager.NavigateTo("hotel-room/create");
+                    }
+
+                    HotelRoomModel.PlaceType = SelectedType;
+                    HotelRoomModel.CityHotelId = SelectedCity.Value;
+                    HotelRoomModel.Details = await QuillHtml.GetHTML();
+                    HotelRoomModel.UserId = user.Id;
                     var createdResult = await HotelRoomRepository.CreateHotelRoom(HotelRoomModel);
+                    if (HotelRoomModel.ImageUrls.Count == 0)
+                    {
+                        await JsRuntime.ToastrError("عکسی انتخاب نشده");
+                        return;
+                    }
                     await AddHotelRoomImage(createdResult);
                     await JsRuntime.ToastrSuccess("اتاق هتل با موفقیت ایجاد شد.");
                 }

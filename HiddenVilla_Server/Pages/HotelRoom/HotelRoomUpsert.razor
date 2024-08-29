@@ -174,3 +174,28 @@
     </div>
 </div>
 
+@code {
+
+    private async Task<bool>
+        HandleValidation()
+    {
+        if (!SelectedCity.HasValue)
+        {
+            await JsRuntime.ToastrError("حتما باید یک شهر انتخاب شود");
+            return false;
+        }
+        if (string.IsNullOrEmpty(SelectedType))
+        {
+            await JsRuntime.ToastrError("لطفا نوع اتاق خود را انتخاب کنید");
+            return false;
+        }
+        if (HotelRoomModel.Ideas.Count == 0)
+        {
+            await JsRuntime.ToastrError("امکانات باید انتخاب شود");
+            return false;
+        }
+        return true;
+
+    }
+
+}
